@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Image from "next/image"
 import type { Product } from "@/types"
-import { ShoppingCart, Heart, Star, Check, Tag, Clock, Truck, Shield } from "lucide-react"
+import { ShoppingCart, Heart, Star, Cpu, HardDrive, Monitor, Gamepad } from "lucide-react"
 import { motion } from "framer-motion"
 import { ProductModal } from "./ProductModal"
 
@@ -21,21 +21,39 @@ export function ProductCard({ product }: ProductCardProps) {
     e.stopPropagation();
     setIsWishlisted(!isWishlisted);
   };
+
+  // Helper function to get appropriate icon based on category
+  const getCategoryIcon = () => {
+    switch(product.category) {
+      case "โน้ตบุ๊ค":
+        return <Cpu size={12} />;
+      case "คอมพิวเตอร์ตั้งโต๊ะ":
+        return <Monitor size={12} />;
+      case "อุปกรณ์เสริม":
+        return <HardDrive size={12} />;
+      case "จัดเก็บข้อมูล":
+        return <HardDrive size={12} />;
+      case "เกมมิ่งเกียร์":
+        return <Gamepad size={12} />;
+      default:
+        return <Cpu size={12} />;
+    }
+  };
   
   return (
     <>
       <motion.div 
-        className="card-hover bg-white dark:bg-gray-800 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700 cursor-pointer group"
+        className="card-hover bg-white dark:bg-gray-800 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700 cursor-pointer group h-full flex flex-col"
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.3 }}
         onClick={() => setIsModalOpen(true)}
       >
-        <div className="relative h-52 w-full">
+        <div className="relative h-40 w-full">
           <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-black/20 z-10 group-hover:opacity-70 transition-all duration-300" />
           
           <Image
-            src={product.image_url || "/placeholder.svg?height=200&width=300"}
+            src={product.image_url || "https://via.placeholder.com/300x200?text=IT+Equipment"}
             alt={product.name}
             fill
             className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -49,16 +67,10 @@ export function ProductCard({ product }: ProductCardProps) {
             }`}
             onClick={handleWishlist}
           >
-            <Heart size={18} className={isWishlisted ? "fill-current" : ""} />
+            <Heart size={16} className={isWishlisted ? "fill-current" : ""} />
           </button>
           
-          {product.discount && (
-            <div className="absolute top-3 left-3 z-20 bg-red-500 text-white px-2 py-1 rounded-md text-xs font-medium flex items-center gap-1">
-              <Tag size={12} /> -{product.discount}%
-            </div>
-          )}
-          
-          {!product.inStock && (
+          {product.stock === 0 && (
             <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white py-2 text-center text-sm font-medium z-20">
               สินค้าหมด
             </div>
@@ -71,62 +83,57 @@ export function ProductCard({ product }: ProductCardProps) {
           )}
         </div>
 
-        <div className="p-4">
+        <div className="p-3 flex flex-col flex-grow">
           <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 mb-2 gap-2">
-            <span className="capitalize bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded-full">{product.category}</span>
-            {product.freeShipping && (
-              <span className="bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 px-2 py-0.5 rounded-full flex items-center gap-1">
-                <Truck size={10} /> ส่งฟรี
-              </span>
-            )}
+            <span className="capitalize bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded-full flex items-center gap-1">
+              {getCategoryIcon()}
+              {product.category}
+            </span>
           </div>
           
-          <h3 className="font-bold text-lg text-gray-900 dark:text-gray-100 mb-1 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{product.name}</h3>
+          <h3 className="font-bold text-sm text-gray-900 dark:text-gray-100 mb-1 line-clamp-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{product.name}</h3>
 
-          <p className="text-gray-600 dark:text-gray-300 text-sm mb-3 line-clamp-2">{product.description}</p>
+          <p className="text-xs text-gray-600 dark:text-gray-300 mb-2 line-clamp-2 flex-grow">{product.description}</p>
 
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex flex-col">
-              {product.originalPrice && product.originalPrice > product.price ? (
-                <>
-                  <span className="text-xl font-bold text-blue-600 dark:text-blue-400">฿{product.price.toLocaleString()}</span>
-                  <span className="text-sm text-gray-500 line-through">฿{product.originalPrice.toLocaleString()}</span>
-                </>
-              ) : (
-                <span className="text-xl font-bold text-blue-600 dark:text-blue-400">฿{product.price.toLocaleString()}</span>
-              )}
-            </div>
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-bold text-blue-600 dark:text-blue-400">฿{product.price.toLocaleString()}</span>
 
             {product.rating && (
-              <div className="flex items-center bg-gray-50 dark:bg-gray-700 px-2 py-0.5 rounded-lg">
-                {[...Array(5)].map((_, i) => (
-                  <Star 
-                    key={i} 
-                    size={14} 
-                    className={i < Math.floor(rating) ? "text-yellow-400" : "text-gray-300 dark:text-gray-600"}
-                    fill={i < Math.floor(rating) ? "currentColor" : "none"}
-                  />
-                ))}
+              <div className="flex items-center bg-gray-50 dark:bg-gray-700 px-1.5 py-0.5 rounded-lg">
+                <Star size={12} className="text-yellow-400 fill-current" />
                 <span className="text-xs text-gray-600 dark:text-gray-300 ml-1">{rating}</span>
               </div>
             )}
           </div>
 
+          <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mb-2">
+            <div className="flex items-center gap-1">
+              <HardDrive size={12} />
+              <span>สต็อก: {product.stock}</span>
+            </div>
+            {product.reviews && (
+              <div className="flex items-center gap-1">
+                <Star size={12} />
+                <span>รีวิว: {product.reviews}</span>
+              </div>
+            )}
+          </div>
+
           <button
-            className={`w-full py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 transition-all duration-300 ${
-              product.inStock 
+            className={`w-full py-2 px-3 rounded-lg flex items-center justify-center gap-1.5 transition-all duration-300 text-xs ${
+              product.stock > 0
                 ? "bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white shadow-sm hover:shadow-md" 
                 : "bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed"
             }`}
-            disabled={!product.inStock}
+            disabled={product.stock === 0}
             onClick={(e) => {
               e.stopPropagation();
               // Add to cart functionality would go here
             }}
           >
-            {product.inStock ? (
+            {product.stock > 0 ? (
               <>
-                <ShoppingCart size={16} />
+                <ShoppingCart size={14} />
                 เพิ่มลงตะกร้า
               </>
             ) : (
@@ -135,21 +142,6 @@ export function ProductCard({ product }: ProductCardProps) {
               </>
             )}
           </button>
-          
-          <div className="mt-3 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-            {product.fastDelivery && (
-              <div className="flex items-center gap-1">
-                <Truck size={12} />
-                <span>จัดส่งด่วน</span>
-              </div>
-            )}
-            {product.warranty && (
-              <div className="flex items-center gap-1">
-                <Shield size={12} />
-                <span>รับประกัน {product.warranty}</span>
-              </div>
-            )}
-          </div>
         </div>
       </motion.div>
 

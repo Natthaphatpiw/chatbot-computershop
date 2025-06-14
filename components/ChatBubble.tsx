@@ -1,10 +1,10 @@
 import type { ChatMessage } from "@/types"
 import { ProductCard } from "./ProductCard"
-import { User, Bot, Copy, Check, ChevronDown, Clock } from "lucide-react"
+import { User, Bot, Copy, Check, ChevronDown, Clock, ChevronRight, ChevronLeft } from "lucide-react"
 import { motion } from "framer-motion"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
-import { useState } from "react"
+import { useState, useRef } from "react"
 
 interface ChatBubbleProps {
   message: ChatMessage
@@ -14,7 +14,8 @@ export function ChatBubble({ message }: ChatBubbleProps) {
   const isUser = message.role === "user"
   const [copied, setCopied] = useState(false)
   const [showAllProducts, setShowAllProducts] = useState(false)
-  const productsToShow = showAllProducts ? message.products : message.products?.slice(0, 3)
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const productsToShow = showAllProducts ? message.products : message.products?.slice(0, 6)
   
   const handleCopy = () => {
     navigator.clipboard.writeText(message.content);
@@ -24,6 +25,18 @@ export function ChatBubble({ message }: ChatBubbleProps) {
   
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  };
+
+  const scrollLeft = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: -300, behavior: 'smooth' });
+    }
+  };
+
+  const scrollRight = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: 300, behavior: 'smooth' });
+    }
   };
   
   return (
@@ -72,7 +85,7 @@ export function ChatBubble({ message }: ChatBubbleProps) {
           </button>
         )}
 
-        {/* Product cards for assistant messages */}
+        {/* Product cards for assistant messages - Horizontal Scroll */}
         {!isUser && message.products && message.products.length > 0 && (
           <div className="mt-4 space-y-4">
             <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-700/50 rounded-lg p-2.5">
@@ -81,10 +94,10 @@ export function ChatBubble({ message }: ChatBubbleProps) {
                   <span className="text-xs font-medium text-blue-600 dark:text-blue-400">{message.products.length}</span>
                 </span>
                 <p className="text-sm text-gray-700 dark:text-gray-300">
-                  พบสินค้าที่เกี่ยวข้อง
+                  พบอุปกรณ์ IT ที่เกี่ยวข้อง
                 </p>
               </div>
-              {message.products.length > 3 && (
+              {message.products.length > 6 && (
                 <button 
                   onClick={() => setShowAllProducts(!showAllProducts)}
                   className="text-xs text-blue-600 dark:text-blue-400 flex items-center hover:underline"
@@ -98,27 +111,50 @@ export function ChatBubble({ message }: ChatBubbleProps) {
               )}
             </div>
             
-            <div className="grid grid-cols-1 gap-4">
-              {productsToShow?.map((product) => (
-                <motion.div
-                  key={product._id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <ProductCard product={product} />
-                </motion.div>
-              ))}
+            <div className="relative">
+              {/* Scroll buttons */}
+              <button 
+                onClick={scrollLeft} 
+                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-2 rounded-full shadow-md border border-gray-200 dark:border-gray-700"
+                aria-label="Scroll left"
+              >
+                <ChevronLeft size={20} className="text-gray-600 dark:text-gray-400" />
+              </button>
+              
+              <div 
+                ref={scrollContainerRef}
+                className="flex overflow-x-auto gap-4 py-2 px-8 snap-x snap-mandatory no-scrollbar"
+              >
+                {productsToShow?.map((product) => (
+                  <motion.div
+                    key={product._id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="snap-center flex-shrink-0 w-64"
+                  >
+                    <ProductCard product={product} />
+                  </motion.div>
+                ))}
+              </div>
+              
+              <button 
+                onClick={scrollRight} 
+                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-2 rounded-full shadow-md border border-gray-200 dark:border-gray-700"
+                aria-label="Scroll right"
+              >
+                <ChevronRight size={20} className="text-gray-600 dark:text-gray-400" />
+              </button>
             </div>
             
-            {message.products.length > 3 && !showAllProducts && (
+            {message.products.length > 6 && !showAllProducts && (
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setShowAllProducts(true)}
                 className="w-full py-2.5 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-800/30 rounded-lg text-sm text-blue-600 dark:text-blue-400 transition-colors flex items-center justify-center border border-blue-100 dark:border-blue-900/30"
               >
-                แสดงสินค้าเพิ่มเติม ({message.products.length - 3} รายการ)
+                แสดงสินค้าเพิ่มเติม ({message.products.length - 6} รายการ)
                 <ChevronDown size={16} className="ml-1" />
               </motion.button>
             )}

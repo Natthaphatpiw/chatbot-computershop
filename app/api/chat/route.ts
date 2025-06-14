@@ -2,20 +2,21 @@ import { type NextRequest, NextResponse } from "next/server"
 import clientPromise from "@/lib/mongodb"
 import { generateMongoQuery, formatProductResponse } from "@/lib/ai-helpers"
 import type { Product } from "@/types"
+import type { MongoQueryWithReason } from "@/lib/ai-helpers"
 
 export async function POST(req: NextRequest) {
   try {
     const { message } = await req.json()
-
     if (!message) {
       return NextResponse.json({ error: "Message is required" }, { status: 400 })
     }
 
-    const mongoQuery = await generateMongoQuery(message)
+    // รับ reason ด้วย
+    const mongoQuery = await generateMongoQuery(message) as MongoQueryWithReason
 
     const client = await clientPromise
-    const db = client.db("shopdb") // ✅ Database name you use
-    const collection = db.collection("products")
+    const db = client.db("shopdb")
+    const collection = db.collection("computershop")
 
     let products: Product[] = []
 
@@ -31,6 +32,8 @@ export async function POST(req: NextRequest) {
           inStock: 1,
           rating: 1,
           reviews: 1,
+          stock: 1,
+          tags: 1,
         },
       })
 
@@ -51,11 +54,13 @@ export async function POST(req: NextRequest) {
         .toArray()) as unknown as Product[]
     }
 
-    const responseText = await formatProductResponse(message, products)
+    // ส่ง reason ให้กับ formatProductResponse ด้วย
+    const responseText = await formatProductResponse(message, products, mongoQuery.reason)
 
     return NextResponse.json({
       message: responseText,
       products,
+      reason: mongoQuery.reason, // ส่งกลับ reason เผื่ออยากโชว์ใน UI
     })
   } catch (error) {
     console.error("API Error:", error)

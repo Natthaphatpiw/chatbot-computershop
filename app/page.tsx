@@ -5,20 +5,19 @@ import { ChatBubble } from "@/components/ChatBubble"
 import { ChatInput } from "@/components/ChatInput"
 import { ThemeToggle } from "@/components/theme-toggle"
 import type { ChatMessage } from "@/types"
-import { MessageCircle, ShoppingBag, Search, Menu, Bell, User as UserIcon, ChevronRight, Sparkles, X, ArrowUp, ArrowDown } from "lucide-react"
+import { MessageCircle, ShoppingBag, Search, Menu, Bell, User as UserIcon, ChevronRight, Sparkles, X, ArrowUp, ArrowDown, Monitor } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
 // Suggested questions for the user
-const suggestions = ["สินค้าแนะนำ", "หมวดหมู่เครื่องประดับ", "เสื้อผ้าแนะนำ", "เสื้อผ้าราคาถูกแต่ดี"];
+const suggestions = ["แนะนำเกมมิ่งเกียร์ราคาถูก", "แนะนำโน้ตบุ๊คสำหรับเล่นเกม", "แนะนำอุปกรณ์เสริมที่เกมเมอร์ต้องมี", "แนะนำอุปกรณ์จัดเก็บข้อมูล"];
 
 // Categories for quick navigation
 const categories = [
-  { name: "อิเล็กทรอนิกส์", icon: "💻" },
-  { name: "แฟชั่น", icon: "👕" },
-  { name: "ความงาม", icon: "✨" },
-  { name: "บ้านและสวน", icon: "🏡" },
-  { name: "กีฬา", icon: "⚽" },
-  { name: "ของเล่น", icon: "🎮" },
+  { name: "โน้ตบุ๊ค", icon: "💻" },
+  { name: "คอมพิวเตอร์ตั้งโต๊ะ", icon: "🖥️" },
+  { name: "อุปกรณ์เสริม", icon: "🎮" },
+  { name: "จัดเก็บข้อมูล", icon: "💾" },
+  { name: "เกมมิ่งเกียร์", icon: "🎮" },
 ];
 
 export default function ChatPage() {
@@ -27,7 +26,7 @@ export default function ChatPage() {
       id: "1",
       role: "assistant",
       content:
-        "สวัสดี! ฉันเป็นผู้ช่วยช้อปปิ้งอัจฉริยะของคุณ พร้อมช่วยคุณค้นหาสินค้าที่ต้องการ คุณสามารถถามฉันเกี่ยวกับสินค้าเฉพาะ หมวดหมู่ หรือตามงบประมาณของคุณได้!",
+        "สวัสดีครับ! ผมเป็นผู้ช่วยอัจฉริยะของร้าน IT Equipment Shop พร้อมช่วยคุณเลือกอุปกรณ์คอมพิวเตอร์และอุปกรณ์ไอทีที่เหมาะกับความต้องการของคุณ 🖥️ คุณสามารถถามเกี่ยวกับโน้ตบุ๊ค คอมพิวเตอร์ตั้งโต๊ะ อุปกรณ์เสริม หรืออุปกรณ์จัดเก็บข้อมูลได้เลยครับ!",
       timestamp: new Date(),
     },
   ])
@@ -169,11 +168,11 @@ export default function ChatPage() {
             {/* Logo and Title */}
             <div className="flex items-center gap-3">
               <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-2 rounded-xl shadow-md">
-                <ShoppingBag className="text-white" size={24} />
+                <Monitor className="text-white" size={24} />
               </div>
               <div>
-                <h1 className="text-xl font-bold gradient-text">ShopSmart</h1>
-                <p className="text-xs text-gray-500 dark:text-gray-400">AI-Powered Shopping Assistant</p>
+                <h1 className="text-xl font-bold gradient-text">IT Equipment Shop</h1>
+                <p className="text-xs text-gray-500 dark:text-gray-400">AI-Powered Computer Store</p>
               </div>
             </div>
             
