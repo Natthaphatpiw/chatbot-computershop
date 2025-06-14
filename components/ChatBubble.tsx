@@ -1,6 +1,6 @@
 import type { ChatMessage } from "@/types"
 import { ProductCard } from "./ProductCard"
-import { User, Bot, Copy, Check, ChevronDown } from "lucide-react"
+import { User, Bot, Copy, Check, ChevronDown, Clock } from "lucide-react"
 import { motion } from "framer-motion"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
@@ -22,24 +22,28 @@ export function ChatBubble({ message }: ChatBubbleProps) {
     setTimeout(() => setCopied(false), 2000);
   };
   
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  };
+  
   return (
     <motion.div 
-      className={`flex ${isUser ? "justify-end" : "justify-start"} mb-4`}
+      className={`flex ${isUser ? "justify-end" : "justify-start"} mb-6`}
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
       {!isUser && (
-        <div className="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center mr-2 flex-shrink-0">
-          <Bot size={18} className="text-blue-600 dark:text-blue-400" />
+        <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center mr-3 flex-shrink-0 shadow-md">
+          <Bot size={20} className="text-white" />
         </div>
       )}
       
-      <div className={`max-w-[80%] ${isUser ? "order-1" : "order-2"} relative group`}>
+      <div className={`max-w-[85%] ${isUser ? "order-1" : "order-2"} relative group`}>
         <div
-          className={`px-4 py-3 rounded-2xl shadow-sm ${
+          className={`px-5 py-3.5 rounded-2xl shadow-soft ${
             isUser 
-              ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white" 
+              ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white" 
               : "bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 text-gray-800 dark:text-gray-200"
           }`}
         >
@@ -58,7 +62,7 @@ export function ChatBubble({ message }: ChatBubbleProps) {
         {!isUser && (
           <button 
             onClick={handleCopy}
-            className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600"
+            className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 z-10"
           >
             {copied ? (
               <Check size={14} className="text-green-500" />
@@ -70,11 +74,16 @@ export function ChatBubble({ message }: ChatBubbleProps) {
 
         {/* Product cards for assistant messages */}
         {!isUser && message.products && message.products.length > 0 && (
-          <div className="mt-4 grid grid-cols-1 gap-4">
-            <div className="flex items-center justify-between">
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                พบสินค้า {message.products.length} รายการ
-              </p>
+          <div className="mt-4 space-y-4">
+            <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-700/50 rounded-lg p-2.5">
+              <div className="flex items-center gap-2">
+                <span className="h-6 w-6 flex items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30">
+                  <span className="text-xs font-medium text-blue-600 dark:text-blue-400">{message.products.length}</span>
+                </span>
+                <p className="text-sm text-gray-700 dark:text-gray-300">
+                  พบสินค้าที่เกี่ยวข้อง
+                </p>
+              </div>
               {message.products.length > 3 && (
                 <button 
                   onClick={() => setShowAllProducts(!showAllProducts)}
@@ -89,23 +98,25 @@ export function ChatBubble({ message }: ChatBubbleProps) {
               )}
             </div>
             
-            {productsToShow?.map((product) => (
-              <motion.div
-                key={product._id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <ProductCard product={product} />
-              </motion.div>
-            ))}
+            <div className="grid grid-cols-1 gap-4">
+              {productsToShow?.map((product) => (
+                <motion.div
+                  key={product._id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <ProductCard product={product} />
+                </motion.div>
+              ))}
+            </div>
             
             {message.products.length > 3 && !showAllProducts && (
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setShowAllProducts(true)}
-                className="w-full py-2 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg text-sm text-gray-600 dark:text-gray-300 transition-colors flex items-center justify-center"
+                className="w-full py-2.5 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-800/30 rounded-lg text-sm text-blue-600 dark:text-blue-400 transition-colors flex items-center justify-center border border-blue-100 dark:border-blue-900/30"
               >
                 แสดงสินค้าเพิ่มเติม ({message.products.length - 3} รายการ)
                 <ChevronDown size={16} className="ml-1" />
@@ -114,14 +125,17 @@ export function ChatBubble({ message }: ChatBubbleProps) {
           </div>
         )}
 
-        <div className={`text-xs text-gray-500 dark:text-gray-400 mt-1 ${isUser ? "text-right" : "text-left"}`}>
-          {message.timestamp.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+        <div className={`flex items-center gap-1.5 mt-1.5 ${isUser ? "justify-end" : "justify-start"}`}>
+          <Clock size={12} className="text-gray-400 dark:text-gray-500" />
+          <span className="text-xs text-gray-500 dark:text-gray-400">
+            {formatTime(message.timestamp)}
+          </span>
         </div>
       </div>
 
       {isUser && (
-        <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center ml-2 flex-shrink-0">
-          <User size={16} className="text-white" />
+        <div className="h-10 w-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center ml-3 flex-shrink-0 shadow-md">
+          <User size={18} className="text-white" />
         </div>
       )}
     </motion.div>
