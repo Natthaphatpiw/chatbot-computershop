@@ -5,7 +5,10 @@ if (!process.env.MONGODB_URI) {
 }
 
 const uri = process.env.MONGODB_URI
-const options = {}
+const options = {
+  tls: true,
+  tlsAllowInvalidCertificates: false,
+}
 
 let client: MongoClient
 let clientPromise: Promise<MongoClient>
@@ -25,10 +28,10 @@ if (process.env.NODE_ENV === "development") {
   clientPromise = client.connect()
 }
 
-// 👇 เพิ่มฟังก์ชันนี้
+// ✅ ฟังก์ชันนี้ใช้เพื่อเข้าถึง DB ได้สะดวก
 export async function getDb(): Promise<Db> {
   const client = await clientPromise
-  return client.db("shopdb")
+  return client.db("shopdb") // หรือเปลี่ยนชื่อ DB ตามที่ใช้จริง
 }
 
 export default clientPromise
