@@ -20,7 +20,8 @@ export async function POST(req: NextRequest) {
       message: result.response,
       products: result.products,
       reasoning: result.reasoning,
-      entities: result.entities, // Include extracted entities for debugging/analytics
+      entities: result.entities,
+      queryReasoning: result.queryReasoning, // Include query reasoning from LLM 1
       success: true
     })
   } catch (error) {
@@ -31,6 +32,7 @@ export async function POST(req: NextRequest) {
       products: [],
       reasoning: null,
       entities: null,
+      queryReasoning: null,
       success: false
     }, { status: 500 })
   }

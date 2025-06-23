@@ -22,7 +22,6 @@ export function normalizeText(text: string): string {
     .replace(/ซีพียู/g, 'ซีพียู')
     .replace(/cpu/gi, 'ซีพียู')
     .replace(/โปรเซส[เซส]อร์/g, 'ซีพียู')
-}
 
 // Category keyword mapping
 export function getCategoryKeywords(categoryInput: string): string[] {
@@ -50,6 +49,7 @@ export function getCategoryKeywords(categoryInput: string): string[] {
     }
   }
   
+  // If no exact match, return the input itself for flexible search
   return [categoryInput]
 }
 
@@ -80,6 +80,7 @@ export function enhanceSearchTerms(originalTerms: string[]): string[] {
   const enhanced = [...originalTerms]
   
   originalTerms.forEach(term => {
+    // Add variations for common Thai tech terms
     if (term.includes('โน้ต')) {
       enhanced.push('laptop', 'notebook')
     }
@@ -93,6 +94,7 @@ export function enhanceSearchTerms(originalTerms: string[]): string[] {
       enhanced.push('mouse')
     }
     
+    // Add number variations (16GB, 16 GB, 16G)
     const numberMatch = term.match(/(\d+)(GB?)/i)
     if (numberMatch) {
       const [, num] = numberMatch
@@ -100,85 +102,88 @@ export function enhanceSearchTerms(originalTerms: string[]): string[] {
     }
   })
   
-  return [...new Set(enhanced)]
+  return [...new Set(enhanced)] // Remove duplicates
 }
 
-// === QUERY LLM === 
-// LLM ตัวที่ 1: เฉพาะทางในการสร้าง MongoDB Query ที่แม่นยำ
-export async function generateOptimalMongoQuery(userInput: string): Promise<{
-  query: Record<string, any>,
-  entities: ExtractedEntities,
-  reasoning: string
-}> {
+// LLM-based entity extraction
+export async function extractEntitiesWithLLM(userInput: string): Promise<ExtractedEntities> {
   const normalizedInput = normalizeText(userInput)
   const categoryMapper = CategoryMapper.getInstance()
   const allCategories = categoryMapper.getAllCategories()
   
+  // Pre-analyze input to get relevant categories
+  const relevantCategories = categoryMapper.getCategoryTerms(normalizedInput)
+  const relevantBrands = categoryMapper.getBrandTerms(normalizedInput)
+  const relevantUsage = categoryMapper.getUsageTerms(normalizedInput)
+  
   const prompt = `
-คุณคือ MongoDB Query Expert AI ที่เชี่ยวชาญในการสร้าง Query ให้ตรงกับความต้องการของผู้ใช้มากที่สุด
+คุณคือ AI ผู้เชี่ยวชาญในการวิเคราะห์ความต้องการสินค้าไอทีจากภาษาไทย
+วิเคราะห์ข้อความต่อไปนี้และดึงข้อมูลสำคัญออกมา:
 
 INPUT: "${normalizedInput}"
 
-ฐานข้อมูล MongoDB Schema:
-- Collection: product_details
-- Fields: title, description, keyword[], price, salePrice, stockQuantity, navigation.{categoryId, categoryMessage1, categoryMessage2, categoryMessage3}, productActive, rating, totalReviews, productView, images
-
-หมวดหมู่หลัก (categoryMessage1):
+ฐานข้อมูลมีหมวดหมู่หลักดังนี้:
 ${allCategories.categoryMessage1.slice(0, 15).join(', ')}
 
-หมวดหมู่ย่อย (categoryMessage2):
+หมวดหมู่ย่อยที่เกี่ยวข้อง:
 ${allCategories.categoryMessage2.slice(0, 20).join(', ')}
 
-**หลักการสำคัญ:**
-1. **จัดการคำกำกวม**: เช่น "โน้ตบุ๊ค", "การ์ดจอมีอะไรบ้าง", "คอมมีอะไรบ้าง" - ต้องเข้าใจและสร้าง query ที่เหมาะสม
-2. **Budget Parsing**: "งบ 15000", "เกิน 15000 แต่ไม่ถึง 20000", "ไม่เกิน 30000"
-3. **Stock Filter**: ต้องกรอง stockQuantity > 0 เสมอ
-4. **Flexible Matching**: ใช้ regex และ array matching สำหรับ keyword
-5. **Predictive Intent**: ถ้า input ไม่ชัดเจน ให้คาดเดาความต้องการ
+**สำคัญ: สำหรับคำถามที่กำกวมหรือไม่สมบูรณ์ (เช่น "แรม", "การ์ดจอ", "โน้ตบุ๊ค"):**
+- วิเคราะห์บริบทและคาดเดาความต้องการที่เป็นไปได้
+- เสนอแนะคำถามเพิ่มเติมในคำอธิบาย
+- ใช้การใช้งานทั่วไป (Office, Student) เป็นค่าเริ่มต้น
+- เสนองบประมาณในช่วงกลาง (15000-30000) สำหรับคำถามกำกวม
 
-**ตัวอย่าง Input ที่ยาก:**
-- "โน้ตบุ๊คงบ 15000" → budget: {max: 15000}, category: NOTEBOOKS
-- "การ์ดจอเกิน 15000 แต่ไม่ถึง 20000" → budget: {min: 15001, max: 19999}, category: COMPUTER HARDWARE (DIY)
-- "คอมมีอะไรบ้าง" → หมวดหมู่คอมพิวเตอร์ทั้งหมด (NOTEBOOKS, COMPUTER HARDWARE, etc.)
-- "การ์ดจอมีอะไรบ้าง" → category: COMPUTER HARDWARE (DIY), subCategory: Graphics Cards
-- "โน้ตบุ๊ค" → category: NOTEBOOKS, คาดเดาเป็น Student/Office usage
-
-ให้ตอบในรูปแบบ JSON:
+ให้ตอบในรูปแบบ JSON เท่านั้น:
 {
-  "mongoQuery": {
-    "productActive": true,
-    "stockQuantity": {"$gt": 0}
-    // ... MongoDB query conditions
-  },
-  "entities": {
-    "category": "หมวดหมู่หลัก",
-    "subCategory": "หมวดหมู่ย่อย",
-    "usage": "Gaming|Office|Student|Creative|Programming",
-    "budget": {"min": number, "max": number},
-    "brand": "แบรนด์",
-    "specs": ["รายการสเปค"],
-    "keywords": ["คำสำคัญ"],
-    "features": ["คุณสมบัติ"],
-    "intent": "ประเภทความต้องการ: specific_product|category_browse|price_range|comparison"
-  },
-  "reasoning": "อธิบายเหตุผลการสร้าง query นี้",
-  "confidence": 0.8,
-  "suggestions": ["คำถามเพิ่มเติมหากความมั่นใจต่ำ"]
+  "category": "หมวดหมู่หลัก (เลือกจาก categoryMessage1 ข้างต้น หรือ null)",
+  "subCategory": "หมวดหมู่ย่อย (เลือกจาก categoryMessage2 หรือ null)",
+  "usage": "การใช้งาน (Gaming, Office, Student, Creative, Programming หรือ null)",
+  "budget": {"min": ตัวเลข, "max": ตัวเลข} หรือ null,
+  "brand": "แบรนด์ (ASUS, MSI, Intel, AMD, Logitech, Razer, etc. หรือ null)",
+  "specs": ["รายการสเปคที่ระบุ เช่น 16GB, RTX 4060, i7"] หรือ null,
+  "keywords": ["คำสำคัญทั้งหมดที่เกี่ยวข้อง"],
+  "features": ["คุณสมบัติพิเศษ เช่น RGB, Wireless, Mechanical"] หรือ null,
+  "suggestions": ["คำถามเพิ่มเติมที่ควรถามผู้ใช้เพื่อให้ได้ผลลัพธ์ที่ดีขึ้น"] หรือ null
 }
 
-**การจัดการ Edge Cases:**
-- Input เป็นแค่ "แรม" → เสนอ default budget range และ usage
-- "เกิน X แต่ไม่ถึง Y" → ใช้ $gte: X+1, $lte: Y-1
-- "คอมมีอะไรบ้าง" → query หลายหมวดหมู่ที่เกี่ยวข้องกับคอมพิวเตอร์
+หลักการวิเคราะห์:
+1. ใช้ชื่อหมวดหมู่ภาษาอังกฤษตามฐานข้อมูลจริง
+2. งบประมาณ: ค้นหาตัวเลข แล้วแปลงเป็น min/max
+3. แบรนด์: ใช้ชื่อแบรนด์มาตรฐาน (ตัวพิมพ์ใหญ่)
+4. สเปค: เก็บตัวเลขและรุ่นที่ระบุชัดเจน
+5. การใช้งาน: แปลงเป็นภาษาอังกฤษ
+6. suggestions: เสนอคำถามเพิ่มเติมสำหรับคำถามที่กำกวม
 
-สร้าง MongoDB Query ที่:
-1. ตรงกับ user intent มากที่สุด
-2. กรอง stock > 0 เสมอ
-3. จัดการ budget range ได้ถูกต้อง
-4. รองรับคำค้นหาที่กำกวม
-5. มี fallback mechanism
+ตัวอย่างที่ถูกต้อง:
+"โน้ตบุ๊คทำงานงบ 20000" → {"category": "NOTEBOOKS", "subCategory": "Notebooks", "usage": "Office", "budget": {"max": 20000}, "keywords": ["โน้ตบุ๊ค", "ทำงาน"]}
 
-ตอบเฉพาะ JSON เท่านั้น
+"เมาส์เกมมิ่งไร้สาย RGB" → {"category": "KEYBOARD / MOUSE / PEN TABLET", "subCategory": "Gaming Mouse", "usage": "Gaming", "features": ["Wireless", "RGB"], "keywords": ["เมาส์", "เกมมิ่ง"]}
+
+"การ์ดจอ RTX 4060 งบ 15000" → {"category": "COMPUTER HARDWARE (DIY)", "subCategory": "Graphics Cards", "specs": ["RTX 4060"], "budget": {"max": 15000}, "keywords": ["การ์ดจอ"]}
+
+"คีย์บอร์ด mechanical RGB" → {"category": "KEYBOARD / MOUSE / PEN TABLET", "subCategory": "Mechanical & Gaming Keyboard", "features": ["Mechanical", "RGB"], "keywords": ["คีย์บอร์ด"]}
+
+"จอมอนิเตอร์ 24 นิ้ว" → {"category": "MONITOR ", "subCategory": "Monitor", "specs": ["24"], "keywords": ["จอมอนิเตอร์"]}
+
+**ตัวอย่างการจัดการคำถามกำกวม:**
+"แรม" → {"category": "COMPUTER HARDWARE (DIY)", "subCategory": "Memory", "usage": "Office", "budget": {"min": 1000, "max": 10000}, "keywords": ["แรม"], "suggestions": ["ต้องการแรมขนาดเท่าไหร่ (8GB, 16GB, 32GB)?", "ใช้กับคอมเดสก์ท็อปหรือโน้ตบุ๊ก?", "งบประมาณเท่าไหร่?"]}
+
+"การ์ดจอ" → {"category": "COMPUTER HARDWARE (DIY)", "subCategory": "Graphics Cards", "usage": "Gaming", "budget": {"min": 5000, "max": 50000}, "keywords": ["การ์ดจอ"], "suggestions": ["ใช้เล่นเกมหรือทำงาน?", "งบประมาณเท่าไหร่?", "ต้องการรุ่นไหน (GTX, RTX)?"]}
+
+"โน้ตบุ๊ค" → {"category": "NOTEBOOKS", "subCategory": "Notebooks", "usage": "Student", "budget": {"min": 15000, "max": 40000}, "keywords": ["โน้ตบุ๊ค"], "suggestions": ["ใช้ทำงานหรือเรียน?", "งบประมาณเท่าไหร่?", "ต้องการหน้าจอขนาดเท่าไหร่?"]}
+
+หลักการเลือก category:
+- โน้ตบุ๊ก/laptop → "NOTEBOOKS"
+- เมาส์/mouse → "KEYBOARD / MOUSE / PEN TABLET"  
+- คีย์บอร์ด/keyboard → "KEYBOARD / MOUSE / PEN TABLET"
+- จอ/monitor → "MONITOR "
+- การ์ดจอ/vga → "COMPUTER HARDWARE (DIY)"
+- ซีพียู/cpu → "COMPUTER HARDWARE (DIY)"
+- แรม/ram → "COMPUTER HARDWARE (DIY)"
+
+ห้าม: สร้างชื่อหมวดหมู่ใหม่ที่ไม่มีในฐานข้อมูล
+ตอบเฉพาะ JSON เท่านั้น ห้ามใส่ข้อความอื่น
 `
 
   try {
@@ -188,188 +193,22 @@ ${allCategories.categoryMessage2.slice(0, 20).join(', ')}
       temperature: 0.1,
     })
     
+    // Clean the response to extract just the JSON part
     let cleanedText = text.trim()
+    
+    // Remove markdown code blocks if present
     if (cleanedText.startsWith('```json')) {
       cleanedText = cleanedText.replace(/^```json\s*/, '').replace(/\s*```$/, '')
     } else if (cleanedText.startsWith('```')) {
       cleanedText = cleanedText.replace(/^```\s*/, '').replace(/\s*```$/, '')
     }
     
-    const result = JSON.parse(cleanedText.trim())
-    
-    return {
-      query: result.mongoQuery,
-      entities: result.entities,
-      reasoning: result.reasoning || 'Query generated from user input'
-    }
+    return JSON.parse(cleanedText.trim())
   } catch (error) {
-    console.error("Query generation error:", error)
-    return generateFallbackQuery(normalizedInput)
+    console.error("Entity extraction error:", error)
+    // Fallback entity extraction
+    return extractEntitiesFallback(normalizedInput)
   }
-}
-
-// Fallback query generation
-function generateFallbackQuery(input: string): {
-  query: Record<string, any>,
-  entities: ExtractedEntities,
-  reasoning: string
-} {
-  const entities = extractEntitiesFallback(input)
-  const query = buildQuery(entities)
-  
-  return {
-    query,
-    entities,
-    reasoning: 'Fallback query generated due to parsing error'
-  }
-}
-
-// === RESPONSE LLM ===
-// LLM ตัวที่ 2: เฉพาะทางในการสร้างคำแนะนำสินค้าที่เป็นธรรมชาติ
-export async function generateNaturalProductRecommendation(
-  userInput: string,
-  entities: ExtractedEntities,
-  queryResult: Product[],
-  searchReasoning: string
-): Promise<string> {
-  if (queryResult.length === 0) {
-    return await generateNoResultsResponse(userInput, entities)
-  }
-
-  const topProducts = queryResult.slice(0, 3)
-  const totalResults = queryResult.length
-  
-  const prompt = `
-คุณคือ AI Sales Assistant ที่เชี่ยวชาญในการแนะนำสินค้าไอทีให้ลูกค้า
-
-User Input: "${userInput}"
-Search Reasoning: ${searchReasoning}
-Total Results: ${totalResults}
-
-Top Products Found:
-${topProducts.map((p, i) => `
-${i + 1}. ${p.title}
-   - ราคา: ฿${p.salePrice.toLocaleString()} (ราคาเต็ม: ฿${p.price.toLocaleString()})
-   - คะแนน: ${p.rating}/5 (${p.totalReviews} รีวิว)
-   - ยอดนิยม: ${p.productView.toLocaleString()} ครั้งเข้าชม
-   - สต็อก: ${p.stockQuantity} ชิ้น
-   - หมวด: ${p.navigation?.categoryMessage1} > ${p.navigation?.categoryMessage2}`).join('')}
-
-User Entities:
-- หมวดหมู่: ${entities.category || 'ไม่ระบุ'}
-- การใช้งาน: ${entities.usage || 'ไม่ระบุ'}
-- งบประมาณ: ${entities.budget ? `฿${entities.budget.min || 0}-${entities.budget.max || '∞'}` : 'ไม่ระบุ'}
-- แบรนด์: ${entities.brand || 'ไม่ระบุ'}
-- สเปค: ${entities.specs?.join(', ') || 'ไม่ระบุ'}
-- คุณสมบัติ: ${entities.features?.join(', ') || 'ไม่ระบุ'}
-
-**Instructions:**
-1. สร้างการแนะนำที่เป็นธรรมชาติ เหมือนพนักงานขายมืออาชีพ
-2. อธิบายว่าทำไมแนะนำสินค้านี้ (highlight key selling points)
-3. เปรียบเทียบตัวเลือกหากมีหลายตัว
-4. ระบุข้อดี: ราคา, คะแนน, ความนิยม, ส่วนลด, สต็อก
-5. แนะนำเพิ่มเติมหากเป็นคำถามกำกวม
-6. ใช้ emoji เพื่อให้น่าสนใจ
-7. ไม่ต้องแสดง JSON หรือข้อมูลดิบ
-
-**Response Format:**
-- เริ่มด้วยการสรุปผลการค้นหา
-- แนะนำสินค้าอันดับ 1 พร้อมเหตุผล
-- กล่าวถึงตัวเลือกอื่นๆ หากมี
-- ปิดท้ายด้วยคำแนะนำเพิ่มเติม
-
-สร้างการแนะนำที่เป็นธรรมชาติ เป็นกันเอง และมีประโยชน์!
-`
-
-  try {
-    const { text } = await generateText({
-      model: openai("gpt-4o-mini"),
-      prompt,
-      temperature: 0.7,
-    })
-    
-    return text.trim()
-  } catch (error) {
-    console.error("Response generation error:", error)
-    return generateFallbackResponse(userInput, queryResult)
-  }
-}
-
-// Generate response when no results found
-async function generateNoResultsResponse(userInput: string, entities: ExtractedEntities): Promise<string> {
-  const prompt = `
-คุณคือ AI Assistant ที่ช่วยลูกค้าเมื่อไม่พบสินค้าที่ต้องการ
-
-User Input: "${userInput}"
-Entities: ${JSON.stringify(entities, null, 2)}
-
-สร้างข้อความที่:
-1. แสดงความเสียใจที่ไม่พบสินค้า
-2. วิเคราะห์สาเหตุที่เป็นไปได้
-3. เสนอทางเลือก: ขยายงบ, เปลี่ยนแบรนด์, เปลี่ยนสเปค
-4. เสนอหมวดหมู่ที่เกี่ยวข้อง
-5. ให้คำแนะนำในการค้นหาใหม่
-
-ใช้ emoji และโทนเป็นกันเอง ช่วยเหลือ
-`
-
-  try {
-    const { text } = await generateText({
-      model: openai("gpt-4o-mini"),
-      prompt,
-      temperature: 0.6,
-    })
-    return text.trim()
-  } catch (error) {
-    console.error("No results response error:", error)
-    return generateBasicNoResultsMessage(userInput, entities)
-  }
-}
-
-// Fallback response generation
-function generateFallbackResponse(userInput: string, products: Product[]): string {
-  const topProduct = products[0]
-  const totalResults = products.length
-  
-  let response = `พบสินค้าที่ตรงกับความต้องการ ${totalResults} รายการ 🛍️\n\n`
-  response += `⭐ แนะนำ: ${topProduct.title}\n`
-  response += `💰 ราคา: ฿${topProduct.salePrice.toLocaleString()}`
-  
-  const discount = topProduct.price - topProduct.salePrice
-  if (discount > 0) {
-    const discountPercent = Math.round((discount / topProduct.price) * 100)
-    response += ` (ลด ${discountPercent}% จาก ฿${topProduct.price.toLocaleString()})`
-  }
-  
-  response += `\n📦 คงเหลือ: ${topProduct.stockQuantity} ชิ้น`
-  response += `\n⭐ คะแนน: ${topProduct.rating}/5 (${topProduct.totalReviews} รีวิว)`
-  
-  if (totalResults > 1) {
-    response += `\n\n📋 ดูสินค้าทั้งหมด ${totalResults} รายการเพื่อเลือกที่ใช่สำหรับคุณ!`
-  }
-  
-  return response
-}
-
-function generateBasicNoResultsMessage(userInput: string, entities: ExtractedEntities): string {
-  let response = "ขออภัย ไม่พบสินค้าที่ตรงกับความต้องการของคุณ 🔍\n\n"
-  
-  if (entities.category) response += `หมวด: ${entities.category}\n`
-  if (entities.budget?.max) response += `งบประมาณ: ฿${entities.budget.max.toLocaleString()}\n`
-  if (entities.usage) response += `การใช้งาน: ${entities.usage}\n`
-  
-  response += "\n💡 ข้อเสนอแนะ:\n"
-  response += "• ลองเพิ่มงบประมาณ\n"
-  response += "• ค้นหาด้วยคำอื่น\n"
-  response += "• ระบุความต้องการให้ชัดเจนมากขึ้น"
-  
-  return response
-}
-
-// === LEGACY FUNCTIONS (for backward compatibility) ===
-export async function extractEntitiesWithLLM(userInput: string): Promise<ExtractedEntities> {
-  const result = await generateOptimalMongoQuery(userInput)
-  return result.entities
 }
 
 // Fallback entity extraction without LLM
@@ -378,6 +217,7 @@ function extractEntitiesFallback(input: string): ExtractedEntities {
     keywords: []
   }
   
+  // Enhanced category detection with more variations
   const categoryMap = {
     'แรม': { cat: 'COMPUTER HARDWARE (DIY)', sub: 'Memory', usage: 'Office' },
     'การ์ดจอ': { cat: 'COMPUTER HARDWARE (DIY)', sub: 'Graphics Cards', usage: 'Gaming' },
@@ -388,6 +228,7 @@ function extractEntitiesFallback(input: string): ExtractedEntities {
     'หูฟัง': { cat: 'HEADPHONES', sub: 'Headphones', usage: 'Gaming' }
   }
   
+  // Check for category matches
   for (const [keyword, config] of Object.entries(categoryMap)) {
     if (input.includes(keyword)) {
       entities.category = config.cat
@@ -395,6 +236,7 @@ function extractEntitiesFallback(input: string): ExtractedEntities {
       entities.usage = config.usage
       entities.keywords?.push(keyword)
       
+      // Add helpful suggestions for vague queries
       if (keyword === 'แรม') {
         entities.suggestions = [
           'ต้องการแรมขนาดเท่าไหร่ (8GB, 16GB, 32GB)?',
@@ -421,6 +263,7 @@ function extractEntitiesFallback(input: string): ExtractedEntities {
     }
   }
   
+  // Simple budget extraction
   const budgetMatch = input.match(/(\d+(?:,\d+)*)/g)
   if (budgetMatch) {
     const budget = parseInt(budgetMatch[0].replace(/,/g, ''))
@@ -429,6 +272,7 @@ function extractEntitiesFallback(input: string): ExtractedEntities {
     }
   }
   
+  // Add input as keyword
   entities.keywords?.push(input)
   
   return entities
@@ -441,6 +285,7 @@ export function buildQuery(entities: ExtractedEntities): Record<string, any> {
     stockQuantity: { $gt: 0 } 
   }
   
+  // Budget filtering
   if (entities.budget?.max) {
     query.salePrice = { $lte: entities.budget.max }
     if (entities.budget.min) {
@@ -448,26 +293,34 @@ export function buildQuery(entities: ExtractedEntities): Record<string, any> {
     }
   }
   
+  // PRIORITY 1: Category filtering (must match) - high priority
   if (entities.category) {
     query['navigation.categoryMessage1'] = { $regex: entities.category, $options: 'i' }
   }
   
+  // PRIORITY 2: Sub-category filtering (if available)
   if (entities.subCategory) {
     query['navigation.categoryMessage2'] = { $regex: entities.subCategory, $options: 'i' }
   }
   
+  // PRIORITY 3: Additional filtering with OR conditions for other criteria
   const additionalConditions: any[] = []
+  
+  // Collect all search terms for flexible matching
   const searchTerms: string[] = []
   
+  // Add all relevant terms
   if (entities.keywords) searchTerms.push(...entities.keywords)
   if (entities.specs) searchTerms.push(...entities.specs)
   if (entities.features) searchTerms.push(...entities.features)
   if (entities.usage) searchTerms.push(entities.usage)
   
+  // Enhanced search terms for secondary matching
   if (searchTerms.length > 0) {
     const enhancedTerms = enhanceSearchTerms(searchTerms)
     const uniqueTerms = [...new Set(enhancedTerms)].filter(term => term && term.length > 0)
     
+    // Add text-based searches as additional conditions
     additionalConditions.push(
       { title: { $regex: uniqueTerms.join('|'), $options: 'i' }},
       { description: { $regex: uniqueTerms.join('|'), $options: 'i' }},
@@ -476,11 +329,13 @@ export function buildQuery(entities: ExtractedEntities): Record<string, any> {
     )
   }
   
+  // Add additional conditions as AND with the main category filter
   if (additionalConditions.length > 0) {
     query.$and = query.$and || []
     query.$and.push({ $or: additionalConditions })
   }
   
+  // Brand-specific filtering (high priority)
   if (entities.brand) {
     query.$and = query.$and || []
     query.$and.push({
@@ -501,6 +356,7 @@ export async function generateMongoQuery(userInput: string): Promise<MongoQueryW
     const entities = await extractEntitiesWithLLM(userInput)
     const filter = buildQuery(entities)
     
+    // Generate reasoning
     let reason = "ค้นหาตาม"
     const reasons: string[] = []
     
@@ -521,13 +377,14 @@ export async function generateMongoQuery(userInput: string): Promise<MongoQueryW
     
     return {
       filter,
-      sort: { productView: -1, rating: -1 },
+      sort: { productView: -1, rating: -1 }, // Sort by popularity and rating
       limit: 10,
       reason
     }
   } catch (error) {
     console.error("Query generation error:", error)
     
+    // Fallback query
     return {
       filter: {
         productActive: true,
@@ -556,6 +413,7 @@ export async function formatProductResponse(
   const topProduct = products[0]
   const totalProducts = products.length
   
+  // Calculate discount if applicable
   const discount = topProduct.price - topProduct.salePrice
   const hasDiscount = discount > 0
   const discountPercent = hasDiscount ? Math.round((discount / topProduct.price) * 100) : 0
@@ -566,6 +424,7 @@ export async function formatProductResponse(
     response += `${reason}\n\n`
   }
   
+  // Highlight top recommendation
   response += `⭐ **แนะนำ: ${topProduct.title}**\n`
   response += `💰 ราคา: ฿${topProduct.salePrice.toLocaleString()}`
   
@@ -577,6 +436,7 @@ export async function formatProductResponse(
   response += `\n⭐ คะแนน: ${topProduct.rating}/5 (${topProduct.totalReviews} รีวิว)`
   response += `\n👀 ยอดนิยม: ${topProduct.productView.toLocaleString()} ครั้งเข้าชม`
   
+  // Add reasons for recommendation
   const recommendationReasons: string[] = []
   
   if (topProduct.rating > 4) {

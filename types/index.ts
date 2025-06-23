@@ -49,6 +49,7 @@ export interface ExtractedEntities {
   specs?: string[]
   keywords?: string[]
   features?: string[]
+  suggestions?: string[]
 }
 
 export interface MongoQueryWithReason {

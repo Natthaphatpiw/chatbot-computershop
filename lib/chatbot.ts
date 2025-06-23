@@ -1,9 +1,8 @@
 import type { MongoClient, Collection } from "mongodb"
 import type { Product, ExtractedEntities, MongoQueryWithReason } from "@/types"
 import { 
-  extractEntitiesWithLLM, 
-  buildQuery, 
-  formatProductResponse,
+  generateOptimalMongoQuery,
+  generateNaturalProductRecommendation,
   normalizeText,
   getCategoryKeywords,
   enhanceSearchTerms
@@ -22,23 +21,26 @@ export class ITStoreChatbot {
       // 1. Normalize text
       const normalizedInput = normalizeText(userInput)
       
-      // 2. Extract entities using LLM
-      const entities = await extractEntitiesWithLLM(normalizedInput)
+      // 2. LLM 1: Generate optimal MongoDB query
+      const queryResult = await generateOptimalMongoQuery(normalizedInput)
       
-      // 3. Build MongoDB query with fallback system
-      const query = buildQuery(entities)
+      // 3. Search products with progressive fallback
+      const products = await this.searchWithFallback(queryResult.entities, queryResult.query)
       
-      // 4. Search products with progressive fallback
-      const products = await this.searchWithFallback(entities, query)
-      
-      // 5. Generate response with reasoning
-      const response = await this.generateResponse(entities, products)
+      // 4. LLM 2: Generate natural product recommendations
+      const response = await generateNaturalProductRecommendation(
+        userInput,
+        queryResult.entities,
+        products,
+        queryResult.reasoning
+      )
       
       return {
         products,
         response,
-        reasoning: this.explainSelection(entities, products),
-        entities // Include for debugging/analytics
+        reasoning: this.explainSelection(queryResult.entities, products),
+        entities: queryResult.entities,
+        queryReasoning: queryResult.reasoning
       }
     } catch (error) {
       console.error("Chatbot error:", error)
@@ -46,22 +48,32 @@ export class ITStoreChatbot {
         products: [],
         response: "ขออภัย เกิดข้อผิดพลาดในการค้นหาสินค้า กรุณาลองใหม่อีกครั้ง 🔧",
         reasoning: null,
-        entities: null
+        entities: null,
+        queryReasoning: null
       }
     }
   }
   
-  // Search with progressive fallback system
+  // Enhanced search with progressive fallback system and stock filtering
   private async searchWithFallback(entities: ExtractedEntities, primaryQuery: Record<string, any>): Promise<Product[]> {
+    // Ensure stock filtering is always applied
+    const baseQuery = {
+      ...primaryQuery,
+      productActive: true,
+      stockQuantity: { $gt: 0 }
+    }
+    
     // Primary search with all criteria
-    let products = await this.searchProducts(primaryQuery)
+    let products = await this.searchProducts(baseQuery)
+    console.log(`Primary search found: ${products.length} products`)
     
     // If no results, try progressively broader searches
     if (products.length === 0 && entities.budget) {
       console.log("No results with budget constraint, removing budget filter...")
-      const relaxedQuery = { ...primaryQuery }
+      const relaxedQuery = { ...baseQuery }
       delete relaxedQuery.salePrice
       products = await this.searchProducts(relaxedQuery)
+      console.log(`Budget relaxed search found: ${products.length} products`)
     }
     
     // If still no results, search with just category keywords
@@ -83,20 +95,23 @@ export class ITStoreChatbot {
         ]
       }
       products = await this.searchProducts(keywordQuery)
+      console.log(`Category search found: ${products.length} products`)
     }
     
     // Final fallback: simple text search
     if (products.length === 0) {
       console.log("No results with category search, trying simple text search...")
+      const searchTerm = entities.category || entities.keywords?.[0] || ""
       const fallbackQuery = {
         productActive: true,
         stockQuantity: { $gt: 0 },
         $or: [
-          { title: { $regex: entities.category || entities.keywords?.[0] || "", $options: "i" }},
-          { description: { $regex: entities.category || entities.keywords?.[0] || "", $options: "i" }}
+          { title: { $regex: searchTerm, $options: "i" }},
+          { description: { $regex: searchTerm, $options: "i" }}
         ]
       }
       products = await this.searchProducts(fallbackQuery)
+      console.log(`Fallback search found: ${products.length} products`)
     }
     
     return products
@@ -133,7 +148,10 @@ export class ITStoreChatbot {
     }
   }
   
+  // Legacy method - now handled by Response LLM
   async generateResponse(entities: ExtractedEntities, products: Product[]): Promise<string> {
+    // This method is kept for backward compatibility but no longer used in main flow
+    // The response generation is now handled by generateNaturalProductRecommendation
     if (products.length === 0) {
       let response = "ขออภัย ไม่พบสินค้าที่ตรงกับความต้องการของคุณ"
       
@@ -149,20 +167,9 @@ export class ITStoreChatbot {
       return response
     }
     
-    // Generate reason for selection
-    let reason = "ค้นหาตาม"
-    const reasons: string[] = []
-    
-    if (entities.category) reasons.push(`หมวดหมู่ ${entities.category}`)
-    if (entities.usage) reasons.push(`การใช้งาน ${entities.usage}`)
-    if (entities.budget?.max) reasons.push(`งบประมาณไม่เกิน ${entities.budget.max.toLocaleString()} บาท`)
-    if (entities.brand) reasons.push(`แบรนด์ ${entities.brand}`)
-    if (entities.specs?.length) reasons.push(`สเปค ${entities.specs.join(", ")}`)
-    if (entities.features?.length) reasons.push(`คุณสมบัติ ${entities.features.join(", ")}`)
-    
-    reason += reasons.length > 0 ? reasons.join(", ") : "คำค้นหาที่ระบุ"
-    
-    return await formatProductResponse("", products, reason)
+    // Simple fallback response for legacy compatibility
+    const topProduct = products[0]
+    return `พบสินค้า ${products.length} รายการ\n\n⭐ แนะนำ: ${topProduct.title}\n💰 ราคา: ฿${topProduct.salePrice.toLocaleString()}`
   }
   
   explainSelection(entities: ExtractedEntities, products: Product[]): string | null {
