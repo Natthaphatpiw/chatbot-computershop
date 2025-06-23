@@ -1,0 +1,268 @@
+
+> my-v0-project@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.16
+  - Local:        http://localhost:3000
+  - Environments: .env.local, .env
+
+ ✓ Starting...
+ ✓ Ready in 1318ms
+ ○ Compiling /api/chat ...
+ ✓ Compiled /api/chat in 656ms (161 modules)
+Entity extraction error: SyntaxError: Unexpected token '`', "```json
+{
+"... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at extractEntitiesWithLLM (webpack-internal:///(rsc)/./lib/ai-helpers.ts:236:21)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ITStoreChatbot.processUserInput (webpack-internal:///(rsc)/./lib/chatbot.ts:17:30)
+    at async POST (webpack-internal:///(rsc)/./app/api/chat/route.ts:25:24)
+    at async /Users/pp/Downloads/chatbot-computershop/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:55831
+    at async eO.execute (/Users/pp/Downloads/chatbot-computershop/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:46527)
+    at async eO.handle (/Users/pp/Downloads/chatbot-computershop/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:57165)
+    at async doRender (/Users/pp/Downloads/chatbot-computershop/node_modules/next/dist/server/base-server.js:1352:42)
+    at async cacheEntry.responseCache.get.routeKind (/Users/pp/Downloads/chatbot-computershop/node_modules/next/dist/server/base-server.js:1574:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/Users/pp/Downloads/chatbot-computershop/node_modules/next/dist/server/base-server.js:1482:28)
+    at async DevServer.renderPageComponent (/Users/pp/Downloads/chatbot-computershop/node_modules/next/dist/server/base-server.js:1908:24)
+    at async DevServer.renderToResponseImpl (/Users/pp/Downloads/chatbot-computershop/node_modules/next/dist/server/base-server.js:1946:32)
+    at async DevServer.pipeImpl (/Users/pp/Downloads/chatbot-computershop/node_modules/next/dist/server/base-server.js:921:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/pp/Downloads/chatbot-computershop/node_modules/next/dist/server/next-server.js:272:17)
+    at async DevServer.handleRequestImpl (/Users/pp/Downloads/chatbot-computershop/node_modules/next/dist/server/base-server.js:817:17)
+    at async /Users/pp/Downloads/chatbot-computershop/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/Users/pp/Downloads/chatbot-computershop/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/Users/pp/Downloads/chatbot-computershop/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/Users/pp/Downloads/chatbot-computershop/node_modules/next/dist/server/lib/router-server.js:173:21)
+    at async handleRequest (/Users/pp/Downloads/chatbot-computershop/node_modules/next/dist/server/lib/router-server.js:350:24)
+    at async requestHandlerImpl (/Users/pp/Downloads/chatbot-computershop/node_modules/next/dist/server/lib/router-server.js:374:13)
+    at async Server.requestListener (/Users/pp/Downloads/chatbot-computershop/node_modules/next/dist/server/lib/start-server.js:141:13)
+ POST /api/chat 200 in 3688ms
+ ✓ Compiled in 458ms (161 modules)
+ POST /api/chat 200 in 2809ms
+ ○ Compiling / ...
+ ✓ Compiled / in 4.2s (2180 modules)
+ GET / 200 in 4611ms
+ ✓ Compiled in 506ms (1017 modules)
+ POST /api/chat 200 in 3513ms
+ ✓ Compiled in 1164ms (1017 modules)
+ ✓ Compiled in 313ms (1017 modules)
+ ✓ Compiled in 234ms (1017 modules)
+ ✓ Compiled in 245ms (1017 modules)
+ ✓ Compiled in 250ms (1017 modules)
+ ✓ Compiled in 185ms (1017 modules)
+ ✓ Compiled in 1047ms (1017 modules)
+ ✓ Compiled in 1020ms (2072 modules)
+ ✓ Compiled in 380ms (1017 modules)
+ ✓ Compiled in 375ms (1017 modules)
+ ✓ Compiled in 345ms (1017 modules)
+ ✓ Compiled in 384ms (1017 modules)
+ ○ Compiling /api/chat ...
+ ✓ Compiled /api/chat in 1122ms (1147 modules)
+ POST /api/chat 200 in 5562ms
+ ✓ Compiled in 2.1s (2072 modules)
+ ○ Compiling /api/chat ...
+ ✓ Compiled /api/chat in 1190ms (1147 modules)
+LLM Response for: โน้ตบุ๊กทำงานงบ 20000
+Raw LLM output: {
+  "category": "COMPUTER HARDWARE (DIY)",
+  "subCategory": "Notebooks",
+  "usage": "Office",
+  "budget": {"max": 20000},
+  "brand": null,
+  "specs": null,
+  "keywords": ["โน้ตบุ๊ก", "ทำงาน"],
+  "features": null
+}
+Cleaned JSON: {
+  "category": "COMPUTER HARDWARE (DIY)",
+  "subCategory": "Notebooks",
+  "usage": "Office",
+  "budget": {"max": 20000},
+  "brand": null,
+  "specs": null,
+  "keywords": ["โน้ตบุ๊ก", "ทำงาน"],
+  "features": null
+}
+Parsed entities: {
+  category: 'COMPUTER HARDWARE (DIY)',
+  subCategory: 'Notebooks',
+  usage: 'Office',
+  budget: { max: 20000 },
+  brand: null,
+  specs: null,
+  keywords: [ 'โน้ตบุ๊ก', 'ทำงาน' ],
+  features: null
+}
+ POST /api/chat 200 in 9432ms
+ ✓ Compiled in 714ms (2164 modules)
+LLM Response for: โน้ตบุ๊กทำงานงบ 20000
+Raw LLM output: {
+  "category": "NOTEBOOKS",
+  "subCategory": "Notebooks",
+  "usage": "Office",
+  "budget": {"max": 20000},
+  "keywords": ["โน้ตบุ๊ก", "ทำงาน"]
+}
+Cleaned JSON: {
+  "category": "NOTEBOOKS",
+  "subCategory": "Notebooks",
+  "usage": "Office",
+  "budget": {"max": 20000},
+  "keywords": ["โน้ตบุ๊ก", "ทำงาน"]
+}
+Parsed entities: {
+  category: 'NOTEBOOKS',
+  subCategory: 'Notebooks',
+  usage: 'Office',
+  budget: { max: 20000 },
+  keywords: [ 'โน้ตบุ๊ก', 'ทำงาน' ]
+}
+ POST /api/chat 200 in 2841ms
+LLM Response for: โน้ตบุ๊กทำงานงบ 20000
+Raw LLM output: {
+  "category": "NOTEBOOKS",
+  "subCategory": "Notebooks",
+  "usage": "Office",
+  "budget": {"max": 20000},
+  "keywords": ["โน้ตบุ๊ก", "ทำงาน"]
+}
+Cleaned JSON: {
+  "category": "NOTEBOOKS",
+  "subCategory": "Notebooks",
+  "usage": "Office",
+  "budget": {"max": 20000},
+  "keywords": ["โน้ตบุ๊ก", "ทำงาน"]
+}
+Parsed entities: {
+  category: 'NOTEBOOKS',
+  subCategory: 'Notebooks',
+  usage: 'Office',
+  budget: { max: 20000 },
+  keywords: [ 'โน้ตบุ๊ก', 'ทำงาน' ]
+}
+ POST /api/chat 200 in 2452ms
+LLM Response for: เมาส์เกมมิ่งไร้สาย RGB
+Raw LLM output: {
+  "category": "KEYBOARD / MOUSE / PEN TABLET",
+  "subCategory": "Gaming Mouse",
+  "usage": "Gaming",
+  "features": ["Wireless", "RGB"],
+  "keywords": ["เมาส์", "เกมมิ่ง"]
+}
+Cleaned JSON: {
+  "category": "KEYBOARD / MOUSE / PEN TABLET",
+  "subCategory": "Gaming Mouse",
+  "usage": "Gaming",
+  "features": ["Wireless", "RGB"],
+  "keywords": ["เมาส์", "เกมมิ่ง"]
+}
+Parsed entities: {
+  category: 'KEYBOARD / MOUSE / PEN TABLET',
+  subCategory: 'Gaming Mouse',
+  usage: 'Gaming',
+  features: [ 'Wireless', 'RGB' ],
+  keywords: [ 'เมาส์', 'เกมมิ่ง' ]
+}
+ POST /api/chat 200 in 2138ms
+ ✓ Compiled in 847ms (2164 modules)
+LLM Response for: โน้ตบุ๊กทำงานงบ 20000
+Raw LLM output: ```json
+{
+  "category": "NOTEBOOKS",
+  "subCategory": "Notebooks",
+  "usage": "Office",
+  "budget": {
+    "max": 20000
+  },
+  "keywords": ["โน้ตบุ๊ก", "ทำงาน"]
+}
+```
+Cleaned JSON: {
+  "category": "NOTEBOOKS",
+  "subCategory": "Notebooks",
+  "usage": "Office",
+  "budget": {
+    "max": 20000
+  },
+  "keywords": ["โน้ตบุ๊ก", "ทำงาน"]
+}
+Parsed entities: {
+  category: 'NOTEBOOKS',
+  subCategory: 'Notebooks',
+  usage: 'Office',
+  budget: { max: 20000 },
+  keywords: [ 'โน้ตบุ๊ก', 'ทำงาน' ]
+}
+ POST /api/chat 200 in 2838ms
+LLM Response for: เมาส์เกมมิ่งไร้สาย RGB
+Raw LLM output: {
+  "category": "KEYBOARD / MOUSE / PEN TABLET",
+  "subCategory": "Gaming Mouse",
+  "usage": "Gaming",
+  "features": ["Wireless", "RGB"],
+  "keywords": ["เมาส์", "เกมมิ่ง"]
+}
+Cleaned JSON: {
+  "category": "KEYBOARD / MOUSE / PEN TABLET",
+  "subCategory": "Gaming Mouse",
+  "usage": "Gaming",
+  "features": ["Wireless", "RGB"],
+  "keywords": ["เมาส์", "เกมมิ่ง"]
+}
+Parsed entities: {
+  category: 'KEYBOARD / MOUSE / PEN TABLET',
+  subCategory: 'Gaming Mouse',
+  usage: 'Gaming',
+  features: [ 'Wireless', 'RGB' ],
+  keywords: [ 'เมาส์', 'เกมมิ่ง' ]
+}
+ POST /api/chat 200 in 3031ms
+LLM Response for: การ์ดจอ RTX 4060 งบ 15000
+Raw LLM output: {
+  "category": "COMPUTER HARDWARE (DIY)",
+  "subCategory": "Graphics Cards",
+  "usage": "Gaming",
+  "budget": {"max": 15000},
+  "specs": ["RTX 4060"],
+  "keywords": ["การ์ดจอ"],
+  "features": null
+}
+Cleaned JSON: {
+  "category": "COMPUTER HARDWARE (DIY)",
+  "subCategory": "Graphics Cards",
+  "usage": "Gaming",
+  "budget": {"max": 15000},
+  "specs": ["RTX 4060"],
+  "keywords": ["การ์ดจอ"],
+  "features": null
+}
+Parsed entities: {
+  category: 'COMPUTER HARDWARE (DIY)',
+  subCategory: 'Graphics Cards',
+  usage: 'Gaming',
+  budget: { max: 15000 },
+  specs: [ 'RTX 4060' ],
+  keywords: [ 'การ์ดจอ' ],
+  features: null
+}
+No results with budget constraint, removing budget filter...
+No results with complex query, trying category-only search...
+No results with category search, trying simple text search...
+ POST /api/chat 200 in 3150ms
+ ✓ Compiled in 1256ms (2164 modules)
+ POST /api/chat 200 in 3002ms
+ GET / 200 in 443ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 1299ms (2167 modules)
+ POST /api/chat 404 in 1377ms
+ GET /_next/static/webpack/471dd5fed22725f6.webpack.hot-update.json 404 in 448ms
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET / 200 in 148ms
+ GET / 200 in 47ms
+ POST /api/chat 404 in 30ms
+   Reload env: .env.local
+ ✓ Compiled in 2.4s (2058 modules)
+   Reload env: .env
+ ✓ Compiled in 501ms (2058 modules)
+   Reload env: .env
+ ✓ Compiled in 639ms (2072 modules)

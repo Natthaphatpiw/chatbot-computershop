@@ -6,8 +6,10 @@ if (!process.env.MONGODB_URI) {
 
 const uri = process.env.MONGODB_URI
 const options = {
-  tls: true,
-  tlsAllowInvalidCertificates: false,
+  serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+  connectTimeoutMS: 10000,
+  maxPoolSize: 10, // Maintain up to 10 socket connections
+  retryWrites: true,
 }
 
 let client: MongoClient
@@ -31,7 +33,7 @@ if (process.env.NODE_ENV === "development") {
 // ✅ ฟังก์ชันนี้ใช้เพื่อเข้าถึง DB ได้สะดวก
 export async function getDb(): Promise<Db> {
   const client = await clientPromise
-  return client.db("shopdb") // หรือเปลี่ยนชื่อ DB ตามที่ใช้จริง
+  return client.db("dashboard-ai-data") // Updated to new database name
 }
 
 export default clientPromise
