@@ -4,8 +4,10 @@ from app.models import Product, ExtractedEntities
 from app.services.two_stage_llm import (
     stage1_basic_query_builder,
     stage2_content_analyzer,
+    stage3_question_answerer,
     generate_two_stage_response,
-    normalize_text_advanced
+    normalize_text_advanced,
+    extract_question_phrases
 )
 
 class ITStoreChatbot:
@@ -37,24 +39,43 @@ class ITStoreChatbot:
                 raw_products
             )
             
-            # 6. Generate two-stage response with process explanation
+            # 6. Stage 3: Extract question phrases and answer them
+            remaining_phrases = stage1_result.get("processedTerms", {}).get("remaining", [])
+            question_phrases = extract_question_phrases(remaining_phrases)
+            stage3_answer = ""
+            
+            if question_phrases and len(filtered_products) > 0:
+                stage3_answer = await stage3_question_answerer(
+                    user_input,
+                    stage1_result,
+                    filtered_products,
+                    question_phrases
+                )
+            
+            # 7. Generate comprehensive response (now three-stage)
             response = await generate_two_stage_response(
                 user_input,
                 stage1_result,
                 filtered_products
             )
             
+            # Append Stage 3 answer if available
+            if stage3_answer:
+                response += f"\n\n**💬 คำตอบเพิ่มเติม:**\n{stage3_answer}"
+            
             return {
                 "products": filtered_products,
                 "response": response,
-                "reasoning": self.explain_two_stage_selection(stage1_result, filtered_products),
+                "reasoning": self.explain_three_stage_selection(stage1_result, filtered_products, question_phrases, stage3_answer),
                 "stage1": stage1_result,
+                "stage3Questions": question_phrases,
+                "stage3Answer": stage3_answer,
                 "queryReasoning": stage1_result["reasoning"],
                 "mongoQuery": stage1_result["query"],
                 "confidence": stage1_result.get("confidence", 0.8),
                 "rawProductCount": len(raw_products),
                 "filteredProductCount": len(filtered_products),
-                "searchMethod": "two_stage_llm"
+                "searchMethod": "three_stage_llm"
             }
         except Exception as error:
             print(f"Chatbot error: {error}")
@@ -71,6 +92,69 @@ class ITStoreChatbot:
                 "searchMethod": "error",
                 "error": str(error)
             }
+    
+    def explain_three_stage_selection(self, stage1_result: Dict[str, Any], products: List[Product], question_phrases: List[str], stage3_answer: str) -> str:
+        """Explain three-stage selection process"""
+        if len(products) == 0:
+            return None
+        
+        top_product = products[0]
+        processed_terms = stage1_result.get("processedTerms", {})
+        used_terms = processed_terms.get("used", [])
+        remaining_terms = processed_terms.get("remaining", [])
+        
+        reasoning = f"💭 **Three-Stage Analysis - \"{top_product.title}\":**\n"
+        
+        reasons = []
+        
+        # Stage 1 filtering info
+        if used_terms:
+            reasons.append(f"🔍 Stage 1 กรอง: {', '.join(used_terms)}")
+        
+        # Stage 2 analysis info
+        non_question_remaining = [t for t in remaining_terms if t not in question_phrases]
+        if non_question_remaining:
+            reasons.append(f"🎯 Stage 2 วิเคราะห์: {', '.join(non_question_remaining)}")
+        
+        # Stage 3 question answering
+        if question_phrases:
+            reasons.append(f"💬 Stage 3 ตอบคำถาม: {', '.join(question_phrases)}")
+        
+        # Budget fit
+        budget = processed_terms.get("budget")
+        if budget and budget.get("max") and top_product.salePrice <= budget["max"]:
+            reasons.append(f"✅ ราคาอยู่ในงบ (฿{top_product.salePrice:,})")
+        
+        # High rating
+        if top_product.rating > 4:
+            reasons.append(f"⭐ ได้รีวิวดี ({top_product.rating}/5 จาก {top_product.totalReviews:,} รีวิว)")
+        
+        # Popular product
+        if top_product.productView > 1000:
+            reasons.append(f"🔥 เป็นที่นิยม ({top_product.productView:,} ครั้งเข้าชม)")
+        
+        # Discount
+        discount = top_product.price - top_product.salePrice
+        if discount > 0:
+            discount_percent = round((discount / top_product.price) * 100)
+            reasons.append(f"💰 มีส่วนลด {discount_percent}% (ประหยัด ฿{discount:,})")
+        
+        # Stock availability
+        if top_product.stockQuantity > 10:
+            reasons.append(f"📦 มีสต็อกเพียงพอ ({top_product.stockQuantity} ชิ้น)")
+        elif top_product.stockQuantity > 0:
+            reasons.append(f"⚠️ สต็อกเหลือน้อย ({top_product.stockQuantity} ชิ้น)")
+        
+        # Category match
+        category = processed_terms.get("category")
+        if category and top_product.cateName:
+            if category in top_product.cateName:
+                reasons.append("🎯 ตรงตามหมวดหมู่ที่ต้องการ")
+        
+        if len(reasons) == 0:
+            reasons.append("📊 อันดับต้นๆ จากการค้นหา")
+        
+        return reasoning + "\n".join(reasons)
     
     async def search_products_precise(self, query: Dict[str, Any], limit: int = 50) -> List[Product]:
         """Execute precise MongoDB query with proper error handling"""

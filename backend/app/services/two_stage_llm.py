@@ -111,8 +111,8 @@ def contextual_phrase_segmentation(text: str) -> List[str]:
         (r'ทำงานออฟฟิศ', 'USAGE'),
         (r'ทำงานเอกสาร', 'USAGE'),
         (r'ทำงาน(?!กราฟิก|ออฟฟิศ)', 'USAGE'),  # General work
+        (r'เล่นเกมได้ไหม', 'QUESTION'),         # Specific gaming question - higher priority
         (r'เล่นเกม\s*[\w\s]*', 'USAGE'),
-        (r'เล่นเกมได้ไหม', 'USAGE_QUESTION'),    # Specific gaming question
         (r'ใช้งาน[\w\s]*', 'USAGE'),
         (r'สำหรับ[\w\s]*(?=\s|$)', 'USAGE'),
         
@@ -126,11 +126,18 @@ def contextual_phrase_segmentation(text: str) -> List[str]:
         (r'(ASUS|HP|Dell|MSI|Acer|Lenovo|Apple|Razer|Logitech|Corsair)', 'BRAND'),
         (r'ยี่ห้อ\s*\w+', 'BRAND'),
         
-        # Request phrases
+        # Request phrases (NON-FILTER - should be skipped in Stage 1)
         (r'แนะนำหน่อย', 'REQUEST'),
         (r'รุ่นไหนดี', 'REQUEST'),
         (r'มีอะไรบ้าง', 'REQUEST'),
         (r'แนะนำ\w*', 'REQUEST'),
+        
+        # Question phrases (NON-FILTER - should be skipped in Stage 1)
+        (r'เล่นเกมได้ไหม', 'QUESTION'),       # เล่นเกมได้ไหม
+        (r'\w+ได้ไหม', 'QUESTION'),          # ใช้งานได้ไหม, ทำงานได้ไหม
+        (r'ดีไหม', 'QUESTION'),              # ดีไหม
+        (r'\w+ดีไหม', 'QUESTION'),           # ใช้ดีไหม
+        (r'เป็นอย่างไร', 'QUESTION'),         # เป็นอย่างไร
         
         # Spec phrases
         (r'RTX\s*\d+', 'SPEC'),
@@ -330,6 +337,7 @@ async def stage1_basic_query_builder(user_input: str) -> Dict[str, Any]:
 - **CONTEXTUAL UNDERSTANDING**: อ่านบริบทประโยคก่อนแยกส่วน
 - ถ้าไม่แน่ใจ = ไม่ใส่ใน query (ให้ Stage 2 จัดการ)
 - **CATEGORY INFERENCE**: หากไม่มีหมวดหมู่ชัดเจน แต่มีชื่อผลิตภัณฑ์เฉพาะ ให้อนุมานหมวดหมู่ที่เกี่ยวข้อง
+- **NON-FILTER PHRASES**: คำขอ/คำถาม เช่น "แนะนำหน่อย", "รุ่นไหนดี", "เล่นเกมได้ไหม" ไม่ใช่ filter - ข้ามไป
 
 **CONTEXTUAL ANALYSIS EXAMPLES:**
 
@@ -343,7 +351,7 @@ Input: "อยากได้คอมทำงานกราฟิก แน�
 CONTEXT ANALYSIS:
 - "อยากได้คอม" = ต้องการคอมพิวเตอร์ → cateName: ["Desktop PC", "Notebooks"] ✅ (can filter)
 - "ทำงานกราฟิก" = การใช้งานเฉพาะ → ❌ (usage analysis - leave for Stage 2)
-- "แนะนำหน่อย" = คำขอคำแนะนำ → ❌ (request type - leave for Stage 2)
+- "แนะนำหน่อย" = คำขอคำแนะนำ → ❌ (NON-FILTER request phrase - skip completely)
 
 Input: "คอมเล่นเกม valorant ไม่เกิน 30000"
 CONTEXT ANALYSIS:
@@ -494,6 +502,10 @@ def extract_basic_entities(input_text: str, categories_data: List[str]) -> Dict[
     for phrase in segmented_phrases:
         phrase_lower = phrase.lower()
         
+        # Skip non-filter phrases (requests and questions)
+        if is_non_filter_phrase(phrase):
+            continue  # Skip completely - don't use for filtering
+        
         # Direct category matching first
         for thai_term, english_categories in category_mapping.items():
             if thai_term in phrase_lower:
@@ -548,6 +560,30 @@ def extract_basic_entities(input_text: str, categories_data: List[str]) -> Dict[
                     break
     
     return processed_terms
+
+def is_non_filter_phrase(phrase: str) -> bool:
+    """Check if phrase is a non-filter phrase (request/question) that shouldn't be used for filtering"""
+    phrase_lower = phrase.lower()
+    
+    # Request patterns
+    request_patterns = [
+        r'แนะนำ', r'รุ่นไหนดี', r'มีอะไรบ้าง', r'แนะนำหน่อย'
+    ]
+    
+    # Question patterns  
+    question_patterns = [
+        r'\w+ได้ไหม',      # เล่นเกมได้ไหม, ใช้งานได้ไหม
+        r'\w+ดีไหม',       # ดีไหม
+        r'เป็นอย่างไร'      # เป็นอย่างไร
+    ]
+    
+    all_patterns = request_patterns + question_patterns
+    
+    for pattern in all_patterns:
+        if re.search(pattern, phrase_lower):
+            return True
+    
+    return False
 
 def is_specific_product_name(phrase: str) -> bool:
     """Check if phrase looks like a specific product name"""
@@ -967,11 +1003,153 @@ def generate_two_stage_fallback_response(user_input: str, products: List[Product
     
     return response
 
+# LLM Stage 3: Question Answerer for remaining question phrases
+async def stage3_question_answerer(
+    user_input: str,
+    stage1_result: Dict[str, Any],
+    selected_products: List[Product],
+    remaining_questions: List[str]
+) -> str:
+    """
+    Stage 3 LLM: Answer questions based on selected products
+    Analyzes remaining question phrases and provides answers using product information
+    """
+    if not remaining_questions or len(selected_products) == 0:
+        return ""
+    
+    print(f"[Stage 3] Answering questions: {remaining_questions}")
+    
+    # Prepare products info for analysis
+    top_products = selected_products[:3]  # Analyze top 3 products
+    products_info = ""
+    for i, p in enumerate(top_products):
+        products_info += f"""
+Product {i + 1}: {p.title}
+Price: ฿{p.salePrice:,}
+Category: {p.cateName}
+Description: {p.description[:300]}...
+Rating: {p.rating}/5 ({p.totalReviews} reviews)
+Stock: {p.stockQuantity}
+"""
+    
+    prompt = f"""
+คุณคือ IT Product Expert ที่เชี่ยวชาญในการตอบคำถามเกี่ยวกับสินค้า IT
+
+**USER INPUT:** "{user_input}"
+**QUESTION PHRASES TO ANSWER:** {remaining_questions}
+
+**SELECTED PRODUCTS FOR ANALYSIS:**
+{products_info}
+
+**STAGE 3 MISSION:**
+1. วิเคราะห์แต่ละคำถามใน remaining_questions
+2. ตอบคำถามโดยอ้างอิงจากข้อมูลสินค้าที่ได้รับ
+3. ใช้ความรู้ทั่วไปเกี่ยวกับ IT ประกอบการตอบ
+4. ให้คำตอบที่มีประโยชน์และครอบคลุม
+
+**QUESTION ANALYSIS GUIDELINES:**
+
+**"เล่นเกมได้ไหม" / "gaming performance":**
+- ดู CPU: Ryzen 5/7, Intel i5/i7 = เล่นเกมได้ดี
+- ดู GPU: RTX/GTX series = เล่นเกมได้
+- ดู RAM: 16GB+ = เหมาะสำหรับเกม
+- ดูหมวดหมู่: Gaming Notebooks/Desktop = ออกแบบมาเล่นเกม
+
+**"ใช้งานได้ไหม" / "performance questions":**
+- วิเคราะห์สเปคตามการใช้งาน
+- พิจารณาราคาและความคุ้มค่า
+- แนะนำการใช้งานที่เหมาะสม
+
+**"ดีไหม" / "quality questions":**
+- ดูคะแนนรีวิว และจำนวนรีวิว
+- ดูความนิยม (productView)
+- เปรียบเทียบกับสินค้าอื่น
+
+**ANSWER FORMAT:**
+ตอบแต่ละคำถามในรูปแบบย่อหน้าที่ชัดเจน เป็นธรรมชาติ และให้ข้อมูลที่เป็นประโยชน์
+
+ตอบคำถามที่ถูกถาม โดยใช้ข้อมูลจากสินค้าที่คัดเลือกมา:
+"""
+
+    try:
+        global client
+        if client is None:
+            client = get_openai_client()
+            
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.3,
+        )
+        
+        return response.choices[0].message.content.strip()
+        
+    except Exception as error:
+        print(f"Stage 3 question answering error: {error}")
+        return generate_stage3_fallback_answer(remaining_questions, selected_products)
+
+def generate_stage3_fallback_answer(questions: List[str], products: List[Product]) -> str:
+    """Fallback answer generator for Stage 3"""
+    if not questions or not products:
+        return ""
+    
+    answers = []
+    top_product = products[0]
+    
+    for question in questions:
+        if "เล่นเกม" in question and "ได้ไหม" in question:
+            # Gaming capability assessment
+            if any(keyword in top_product.title.lower() for keyword in ['gaming', 'rtx', 'gtx', 'ryzen', 'intel']):
+                answers.append(f"✅ **{question}**: ใช่ เครื่องนี้เหมาะสำหรับเล่นเกม จากสเปคที่ดูแล้วน่าจะรับเกมส่วนใหญ่ได้")
+            else:
+                answers.append(f"⚠️ **{question}**: อาจเล่นเกมเบาๆ ได้ แต่เกมหนักอาจต้องลดคุณภาพกราฟิก")
+        elif "ดีไหม" in question:
+            # Quality assessment
+            if top_product.rating >= 4:
+                answers.append(f"⭐ **คุณภาพ**: ดี! ได้คะแนน {top_product.rating}/5 จาก {top_product.totalReviews} รีวิว")
+            else:
+                answers.append(f"📊 **คุณภาพ**: พอใช้ ได้คะแนน {top_product.rating}/5 จาก {top_product.totalReviews} รีวิว")
+    
+    return "\n\n".join(answers)
+
+def extract_question_phrases(phrases: List[str]) -> List[str]:
+    """Extract phrases that are questions (for Stage 3)"""
+    question_phrases = []
+    
+    for phrase in phrases:
+        if is_question_phrase(phrase):
+            question_phrases.append(phrase)
+    
+    return question_phrases
+
+def is_question_phrase(phrase: str) -> bool:
+    """Check if phrase is a question that needs Stage 3 analysis"""
+    phrase_lower = phrase.lower()
+    
+    question_patterns = [
+        r'\w+ได้ไหม',      # เล่นเกมได้ไหม, ใช้งานได้ไหม
+        r'\w+ดีไหม',       # ดีไหม
+        r'เป็นอย่างไร',     # เป็นอย่างไร
+        r'อย่างไร',        # อย่างไร
+        r'ดีมั้ย',         # ดีมั้ย
+        r'เอาไหม'          # เอาไหม
+    ]
+    
+    for pattern in question_patterns:
+        if re.search(pattern, phrase_lower):
+            return True
+    
+    return False
+
 # Export main functions
 __all__ = [
     'stage1_basic_query_builder',
     'stage2_content_analyzer', 
+    'stage3_question_answerer',
     'generate_two_stage_response',
     'normalize_text_advanced',
-    'get_comprehensive_category_mapping'
+    'get_comprehensive_category_mapping',
+    'is_non_filter_phrase',
+    'extract_question_phrases',
+    'is_question_phrase'
 ]
