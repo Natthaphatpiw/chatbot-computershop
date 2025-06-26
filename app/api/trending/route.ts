@@ -2,10 +2,12 @@ import { NextRequest, NextResponse } from 'next/server'
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic'
+
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url)
-    const limit = searchParams.get('limit') || '10'
+    const limit = request.nextUrl.searchParams.get('limit') || '10'
     
     const response = await fetch(`${BACKEND_URL}/api/trending?limit=${limit}`, {
       method: 'GET',
