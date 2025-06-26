@@ -260,48 +260,11 @@ export default function ChatPage() {
                     </button>
                   </div>
                 </form>
-                
-                <div className="space-y-4">
-                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">หมวดหมู่สินค้า</h3>
-                  <div className="space-y-2">
-                    {categories.map((category, index) => (
-                      <button
-                        key={index}
-                        className="flex items-center w-full p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-left"
-                        onClick={() => {
-                          handleSendMessage(`หมวดหมู่ ${category.name}`);
-                          setIsMobileMenuOpen(false);
-                        }}
-                      >
-                        <span className="mr-3 text-xl">{category.icon}</span>
-                        <span>{category.name}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
               </div>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Categories bar (desktop only) */}
-      <div className="hidden md:block bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-12 overflow-x-auto no-scrollbar">
-            {categories.map((category, index) => (
-              <button
-                key={index}
-                className="flex items-center px-3 py-1 text-sm text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 whitespace-nowrap transition-colors"
-                onClick={() => handleSendMessage(`หมวดหมู่ ${category.name}`)}
-              >
-                <span className="mr-2">{category.icon}</span>
-                {category.name}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
 
       {/* Chat Messages */}
       <div 
