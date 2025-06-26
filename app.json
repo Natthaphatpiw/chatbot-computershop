@@ -1,0 +1,31 @@
+{
+  "name": "Chatbot Computer Shop Backend",
+  "description": "Backend API for Chatbot Computer Shop with 3-stage AI processing",
+  "repository": "https://github.com/your-username/chatbot-computer-shop-backend",
+  "keywords": ["chatbot", "fastapi", "mongodb", "openai", "ai", "python"],
+  "env": {
+    "MONGODB_URL": {
+      "description": "MongoDB connection string",
+      "value": "mongodb://localhost:27017/chatbot_computershop"
+    },
+    "OPENAI_API_KEY": {
+      "description": "OpenAI API key",
+      "required": true
+    },
+    "ENVIRONMENT": {
+      "description": "Environment (production/development)",
+      "value": "production"
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "basic"
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ]
+}

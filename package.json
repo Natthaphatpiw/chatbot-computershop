@@ -1,0 +1,22 @@
+{
+  "name": "chatbot-computer-shop-backend",
+  "version": "1.0.0",
+  "description": "Backend API for Chatbot Computer Shop with 3-stage AI processing",
+  "main": "start.py",
+  "scripts": {
+    "start": "python start.py",
+    "dev": "uvicorn app.main:app --reload --host 0.0.0.0 --port 8000",
+    "prod": "gunicorn app.main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000",
+    "test": "python -m pytest",
+    "docker": "docker-compose up --build -d",
+    "docker:stop": "docker-compose down",
+    "setup": "./start.sh"
+  },
+  "keywords": ["chatbot", "fastapi", "mongodb", "openai", "ai", "python", "backend"],
+  "author": "Chatbot Computer Shop Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "python": ">=3.12.0"
+  }
+}
