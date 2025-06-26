@@ -72,118 +72,271 @@ def normalize_text_advanced(text: str) -> str:
     
     return normalized
 
-# Enhanced contextual phrase segmentation
-def contextual_phrase_segmentation(text: str) -> List[str]:
+# Enhanced contextual phrase segmentation with better context analysis
+def enhanced_contextual_phrase_segmentation(text: str) -> Dict[str, Any]:
     """
-    Segment input text into meaningful phrases based on context
-    Example: "อยากได้คอมทำงานกราฟิก แนะนำหน่อย" → ["อยากได้คอม", "ทำงานกราฟิก", "แนะนำหน่อย"]
+    Enhanced phrase segmentation with context analysis and phrase classification
+    Returns segmented phrases with their types and processing stage assignments
     """
     import re
     
     # Normalize first
     normalized = normalize_text_advanced(text)
     
-    # Define phrase patterns with context awareness
+    # Initialize result structure
+    result = {
+        "original_text": text,
+        "normalized_text": normalized,
+        "segmented_phrases": [],
+        "phrase_classification": {
+            "filter_phrases": [],           # วลีที่ระบุ filter ได้ชัดเจน (Stage 1 only)
+            "content_analysis_phrases": [], # วลีระบุสินค้าด้วยเนื้อหา (Stage 2)
+            "question_phrases": [],         # วลีคำถาม/คำแนะนำ (Stage 3)
+            "context_inferred_phrases": []  # วลีที่ต้องอนุมานจากบริบท (Stage 1 inference)
+        },
+        "stage_assignments": {
+            "stage1_filter": [],
+            "stage1_inference": [],
+            "stage2_content": [],
+            "stage3_questions": []
+        }
+    }
+    
+    # Enhanced phrase patterns with context awareness and priority
     phrase_patterns = [
-        # Specific product names (highest priority)
-        (r'Ryzen\s*\d+\s*\d+\w*', 'PRODUCT_NAME'),     # Ryzen 5 5600G
-        (r'Intel\s*Core\s*i\d+', 'PRODUCT_NAME'),       # Intel Core i5
-        (r'RTX\s*\d+\w*', 'PRODUCT_NAME'),              # RTX 4060
-        (r'GTX\s*\d+\w*', 'PRODUCT_NAME'),              # GTX 1660
-        (r'AMD\s*\w*\d+\w*', 'PRODUCT_NAME'),           # AMD 5600G
+        # HIGH PRIORITY: Clear filter phrases (Stage 1 - Direct filtering)
+        {
+            "pattern": r'(?:อยากได้|ต้องการ|หา|ซื้อ)\s*(โน้ตบุ๊ก|คอมพิวเตอร์|คอม|การ์ดจอ|เมาส์|คีย์บอร์ด|หูฟัง|จอ|ซีพียู|แรม)',
+            "type": "PRODUCT_DESIRE_FILTER",
+            "stage": "stage1_filter",
+            "priority": 10
+        },
+        {
+            "pattern": r'(โน้ตบุ๊ก|คอมพิวเตอร์|คอมตั้งโต๊ะ|การ์ดจอ|เมาส์|คีย์บอร์ด|หูฟัง|จอมอนิเตอร์|ซีพียู|แรม|เครื่องพิมพ์)(?!\s*[เล่นทำใช้])',
+            "type": "CATEGORY_FILTER",
+            "stage": "stage1_filter", 
+            "priority": 9
+        },
+        {
+            "pattern": r'(?:งบ|ไม่เกิน|ประมาณ|ราคา|budget)[\s\w]*?(\d{1,3}(?:,\d{3})*|\d+)(?:\s*บาท|$)',
+            "type": "BUDGET_FILTER",
+            "stage": "stage1_filter",
+            "priority": 9
+        },
+        {
+            "pattern": r'ราคา[\s\w]*?(\d{1,3}(?:,\d{3})*|\d+)',
+            "type": "BUDGET_FILTER",
+            "stage": "stage1_filter",
+            "priority": 9
+        },
         
-        # Product desire phrases (keep product and desire together)
-        (r'อยากได้(โน้ตบุ๊ก|คอมพิวเตอร์|คอม|การ์ดจอ|เมาส์|คีย์บอร์ด|หูฟัง)', 'PRODUCT_DESIRE'),
-        (r'ต้องการ(โน้ตบุ๊ก|คอมพิวเตอร์|คอม|การ์ดจอ|เมาส์|คีย์บอร์ด|หูฟัง)', 'PRODUCT_DESIRE'),
-        (r'หา(โน้ตบุ๊ก|คอมพิวเตอร์|คอม|การ์ดจอ|เมาส์|คีย์บอร์ด|หูฟัง)', 'PRODUCT_DESIRE'),
+        # MEDIUM PRIORITY: Specific product names (Stage 1 - Category inference + Stage 2)
+        {
+            "pattern": r'(Ryzen\s*\d+\s*\d+\w*|Intel\s*Core\s*i\d+|RTX\s*\d+\w*|GTX\s*\d+\w*|AMD\s*\w*\d+\w*)',
+            "type": "SPECIFIC_PRODUCT_NAME",
+            "stage": "stage1_inference", # อนุมานหมวดหมู่ + ส่งไป Stage 2
+            "priority": 8
+        },
+        {
+            "pattern": r'(ASUS|HP|Dell|MSI|Acer|Lenovo|Apple|Razer|Logitech|Corsair|Gigabyte|EVGA)\s*[\w\s]*',
+            "type": "BRAND_PRODUCT",
+            "stage": "stage2_content",
+            "priority": 7
+        },
         
-        # Product categories as standalone phrases
-        (r'โน้ตบุ๊ก', 'PRODUCT'),
-        (r'คอมพิวเตอร์', 'PRODUCT'),
-        (r'คอม(?!พิ)', 'PRODUCT'),  # "คอม" but not "คอมพิ"
-        (r'การ์ดจอ', 'PRODUCT'),
-        (r'เมาส์', 'PRODUCT'),
-        (r'คีย์บอร์ด', 'PRODUCT'),
-        (r'หูฟัง', 'PRODUCT'),
+        # CONTENT ANALYSIS: Usage and application phrases (Stage 2)
+        {
+            "pattern": r'ทำงานกราฟิก',
+            "type": "USAGE_GRAPHICS",
+            "stage": "stage2_content",
+            "priority": 8
+        },
+        {
+            "pattern": r'ทำงาน\s*กราฟิก',
+            "type": "USAGE_GRAPHICS",
+            "stage": "stage2_content",
+            "priority": 8
+        },
+        {
+            "pattern": r'เล่นเกม\s*(?!ได้ไหม)[\w\s]*',
+            "type": "USAGE_GAMING",
+            "stage": "stage2_content",
+            "priority": 8
+        },
+        {
+            "pattern": r'(?:ทำงาน|ใช้งาน|สำหรับ)(?!กราฟิก)[\w\s]*(?=\s|$)',
+            "type": "USAGE_GENERAL",
+            "stage": "stage2_content", 
+            "priority": 6
+        },
+        {
+            "pattern": r'(?:ออฟฟิศ|เอกสาร|โปรแกรม|ซอฟต์แวร์)[\w\s]*',
+            "type": "USAGE_OFFICE",
+            "stage": "stage2_content",
+            "priority": 6
+        },
         
-        # Usage phrases (more specific patterns)
-        (r'ทำงานกราฟิก', 'USAGE'),
-        (r'ทำงานออฟฟิศ', 'USAGE'),
-        (r'ทำงานเอกสาร', 'USAGE'),
-        (r'ทำงาน(?!กราฟิก|ออฟฟิศ)', 'USAGE'),  # General work
-        (r'เล่นเกมได้ไหม', 'QUESTION'),         # Specific gaming question - higher priority
-        (r'เล่นเกม\s*[\w\s]*', 'USAGE'),
-        (r'ใช้งาน[\w\s]*', 'USAGE'),
-        (r'สำหรับ[\w\s]*(?=\s|$)', 'USAGE'),
+        # QUESTIONS: Request and question phrases (Stage 3)
+        {
+            "pattern": r'เล่นเกมได้ไหม',
+            "type": "GAMING_QUESTION",
+            "stage": "stage3_questions",
+            "priority": 9
+        },
+        {
+            "pattern": r'(?:แนะนำ|recommend)(?:\s*หน่อย|\s*ได้ไหม|\s*ดี)*',
+            "type": "RECOMMENDATION_REQUEST",
+            "stage": "stage3_questions",
+            "priority": 8
+        },
+        {
+            "pattern": r'(?:\w+)?(?:ดีไหม|เป็นอย่างไร|ได้ไหม|ใช้ได้ไหม)',
+            "type": "GENERAL_QUESTION",
+            "stage": "stage3_questions",
+            "priority": 7
+        },
+        {
+            "pattern": r'(?:รุ่นไหนดี|มีอะไรบ้าง|มีไหม)',
+            "type": "PRODUCT_INQUIRY",
+            "stage": "stage3_questions",
+            "priority": 7
+        },
         
-        # Budget phrases
-        (r'งบ\s*\d+(?:,\d+)*', 'BUDGET'),
-        (r'ไม่เกิน\s*\d+(?:,\d+)*', 'BUDGET'),
-        (r'ประมาณ\s*\d+(?:,\d+)*', 'BUDGET'),
-        (r'ราคา[\s\w]*\d+(?:,\d+)*', 'BUDGET'),
-        
-        # Brand phrases
-        (r'(ASUS|HP|Dell|MSI|Acer|Lenovo|Apple|Razer|Logitech|Corsair)', 'BRAND'),
-        (r'ยี่ห้อ\s*\w+', 'BRAND'),
-        
-        # Request phrases (NON-FILTER - should be skipped in Stage 1)
-        (r'แนะนำหน่อย', 'REQUEST'),
-        (r'รุ่นไหนดี', 'REQUEST'),
-        (r'มีอะไรบ้าง', 'REQUEST'),
-        (r'แนะนำ\w*', 'REQUEST'),
-        
-        # Question phrases (NON-FILTER - should be skipped in Stage 1)
-        (r'เล่นเกมได้ไหม', 'QUESTION'),       # เล่นเกมได้ไหม
-        (r'\w+ได้ไหม', 'QUESTION'),          # ใช้งานได้ไหม, ทำงานได้ไหม
-        (r'ดีไหม', 'QUESTION'),              # ดีไหม
-        (r'\w+ดีไหม', 'QUESTION'),           # ใช้ดีไหม
-        (r'เป็นอย่างไร', 'QUESTION'),         # เป็นอย่างไร
-        
-        # Spec phrases
-        (r'RTX\s*\d+', 'SPEC'),
-        (r'GTX\s*\d+', 'SPEC'),
-        (r'\d+GB\s*(RAM|แรม)', 'SPEC'),
-        (r'mechanical', 'SPEC'),
-        (r'ไร้สาย', 'SPEC'),
-        (r'RGB', 'SPEC'),
+        # SPECIFICATIONS (Stage 2)
+        {
+            "pattern": r'(?:\d+GB\s*(?:RAM|แรม)|mechanical|ไร้สาย|RGB|wireless)',
+            "type": "SPECIFICATION",
+            "stage": "stage2_content",
+            "priority": 6
+        }
     ]
     
-    phrases = []
+    # Track processed text to avoid overlapping matches
     processed_text = normalized.lower()
+    found_phrases = []
     
-    # Extract phrases using patterns
-    for pattern, phrase_type in phrase_patterns:
-        matches = re.finditer(pattern, processed_text, re.IGNORECASE)
+    # Sort patterns by priority (highest first)
+    sorted_patterns = sorted(phrase_patterns, key=lambda x: x['priority'], reverse=True)
+    
+    # Extract phrases using prioritized patterns
+    for pattern_info in sorted_patterns:
+        matches = re.finditer(pattern_info['pattern'], processed_text, re.IGNORECASE)
         for match in matches:
             phrase = match.group().strip()
-            if phrase and phrase not in phrases:
-                phrases.append(phrase)
-                # Remove matched phrase to avoid overlap
-                processed_text = processed_text.replace(phrase.lower(), ' ', 1)
+            if phrase and len(phrase) > 1:
+                # Check for overlaps with higher priority phrases - more lenient for smaller phrases
+                overlap = False
+                for existing_phrase, _, _ in found_phrases:
+                    # More strict overlap detection
+                    if (len(phrase) > 5 and len(existing_phrase) > 5):
+                        if (phrase.lower() in existing_phrase.lower() or 
+                            existing_phrase.lower() in phrase.lower()):
+                            overlap = True
+                            break
+                    elif phrase.lower() == existing_phrase.lower():
+                        overlap = True
+                        break
+                
+                if not overlap:
+                    found_phrases.append((phrase, pattern_info['type'], pattern_info['stage']))
+                    # Only replace exact matches to avoid breaking other patterns
+                    processed_text = re.sub(re.escape(phrase.lower()), ' ' * len(phrase), processed_text, count=1)
     
-    # Handle remaining single words that might be important
-    remaining_words = re.findall(r'\b\w{2,}\b', processed_text)
-    category_keywords = ['โน้ตบุ๊ก', 'คอมพิวเตอร์', 'คอม', 'การ์ดจอ', 'เมาส์', 'คีย์บอร์ด', 'หูฟัง']
+    # Initial processing of found phrases (will be overwritten by enhanced fallback)
+    initial_phrases = found_phrases.copy()
     
-    for word in remaining_words:
-        if any(keyword in word for keyword in category_keywords) and word not in phrases:
-            phrases.append(word)
+    # Enhanced fallback: try to find unmatched important words
+    remaining_text = re.sub(r'\s+', ' ', processed_text).strip()
+    important_words = re.findall(r'\b\w{3,}\b', remaining_text)
     
-    # If no phrases found, fallback to simple splitting
-    if not phrases:
-        phrases = [text]
+    # Look for important unmatched terms
+    category_keywords = ['โน้ตบุ๊ก', 'คอม', 'การ์ดจอ', 'เมาส์', 'คีย์บอร์ด', 'หูฟัง']
+    usage_keywords = ['ทำงาน', 'กราฟิก', 'เล่นเกม', 'ออฟฟิศ']
+    budget_keywords = ['ราคา', 'งบ', 'บาท', 'เกิน']
+    question_keywords = ['ไหม', 'ดี', 'แนะนำ', 'รุ่น']
     
-    return phrases
+    for word in important_words:
+        if len(word) > 2 and word not in [p[0].lower() for p in found_phrases]:
+            word_type = None
+            word_stage = None
+            
+            if any(cat in word for cat in category_keywords):
+                word_type = "CATEGORY_FALLBACK"
+                word_stage = "stage1_filter"
+            elif any(usage in word for usage in usage_keywords):
+                word_type = "USAGE_FALLBACK"
+                word_stage = "stage2_content"
+            elif any(budget in word for budget in budget_keywords):
+                word_type = "BUDGET_FALLBACK"
+                word_stage = "stage1_filter"
+            elif any(question in word for question in question_keywords):
+                word_type = "QUESTION_FALLBACK"
+                word_stage = "stage3_questions"
+            else:
+                word_type = "GENERAL_FALLBACK"
+                word_stage = "stage2_content"
+            
+            if word_type:
+                found_phrases.append((word, word_type, word_stage))
+    
+    # Re-process found phrases including fallbacks
+    for phrase, phrase_type, stage in found_phrases:
+        result["segmented_phrases"].append({
+            "phrase": phrase,
+            "type": phrase_type,
+            "stage": stage,
+            "original_text": phrase
+        })
+        
+        # Classify by type
+        if stage == "stage1_filter":
+            result["phrase_classification"]["filter_phrases"].append(phrase)
+            result["stage_assignments"]["stage1_filter"].append(phrase)
+        elif stage == "stage1_inference":
+            result["phrase_classification"]["context_inferred_phrases"].append(phrase) 
+            result["stage_assignments"]["stage1_inference"].append(phrase)
+        elif stage == "stage2_content":
+            result["phrase_classification"]["content_analysis_phrases"].append(phrase)
+            result["stage_assignments"]["stage2_content"].append(phrase)
+        elif stage == "stage3_questions":
+            result["phrase_classification"]["question_phrases"].append(phrase)
+            result["stage_assignments"]["stage3_questions"].append(phrase)
+    
+    # Final fallback: if still no phrases found, create basic segmentation
+    if not found_phrases:
+        words = re.findall(r'\b\w{2,}\b', normalized)
+        if words:
+            # Try to identify at least one phrase for each potential stage
+            basic_phrase = ' '.join(words)
+            result["segmented_phrases"].append({
+                "phrase": basic_phrase,
+                "type": "FALLBACK_ANALYSIS",
+                "stage": "stage2_content",
+                "original_text": basic_phrase
+            })
+            result["phrase_classification"]["content_analysis_phrases"].append(basic_phrase)
+            result["stage_assignments"]["stage2_content"].append(basic_phrase)
+    
+    return result
+
+# Updated contextual_phrase_segmentation for backward compatibility
+def contextual_phrase_segmentation(text: str) -> List[str]:
+    """
+    Backward compatible version - returns just the phrase list
+    """
+    analysis = enhanced_contextual_phrase_segmentation(text)
+    return [item["phrase"] for item in analysis["segmented_phrases"]]
 
 # Load database schema and categories
 def load_database_schema():
     """Load actual database schema and categories"""
     schema_data = {}
     categories_data = []
+    keyword_mapping = {}
     
     # Load schema.json
     try:
-        schema_paths = ['../../../schema.json', '../../schema.json', '../schema.json', 'schema.json']
+        schema_paths = ['backend/schema.json', '../backend/schema.json', './schema.json', 'schema.json']
         
         for path in schema_paths:
             try:
@@ -198,7 +351,7 @@ def load_database_schema():
     
     # Load navigation_attributes.json
     try:
-        nav_paths = ['../../../navigation_attributes.json', '../../navigation_attributes.json', '../navigation_attributes.json', 'navigation_attributes.json']
+        nav_paths = ['backend/navigation_attributes.json', '../backend/navigation_attributes.json', './navigation_attributes.json', 'navigation_attributes.json']
         
         for path in nav_paths:
             try:
@@ -212,7 +365,22 @@ def load_database_schema():
     except Exception as e:
         print(f"Warning: Could not load navigation_attributes.json: {e}")
     
-    return schema_data, categories_data
+    # Load keyword_to_cateName.json (NEW!)
+    try:
+        keyword_paths = ['backend/keyword_to_cateName.json', '../backend/keyword_to_cateName.json', './keyword_to_cateName.json', 'keyword_to_cateName.json']
+        
+        for path in keyword_paths:
+            try:
+                with open(path, 'r', encoding='utf-8') as f:
+                    keyword_mapping = json.load(f)
+                    print(f"✅ Loaded keyword mapping from {path}")
+                    break
+            except FileNotFoundError:
+                continue
+    except Exception as e:
+        print(f"Warning: Could not load keyword_to_cateName.json: {e}")
+    
+    return schema_data, categories_data, keyword_mapping
 
 # Comprehensive Thai-English category mapping
 def get_comprehensive_category_mapping() -> Dict[str, List[str]]:
@@ -289,16 +457,28 @@ def get_comprehensive_category_mapping() -> Dict[str, List[str]]:
         'hdd': ['Hard Drive & Solid State Drive']
     }
 
-# LLM Stage 1: Basic Query Builder - NO content analysis
-async def stage1_basic_query_builder(user_input: str) -> Dict[str, Any]:
+# LLM Stage 1: Context Analysis and Basic Query Builder
+async def stage1_context_analysis_and_query_builder(user_input: str) -> Dict[str, Any]:
     """
-    Stage 1 LLM: Build basic MongoDB query for initial filtering only
-    Focuses ONLY on: category, price, stock - NO title/description analysis
+    Stage 1 LLM: Context Analysis and Basic MongoDB Query Building
+    
+    NEW RESPONSIBILITIES:
+    1. แยกวลีตามบริบท (Contextual Phrase Segmentation)
+    2. วิเคราะห์แต่ละวลีและจัดหมวดหมู่:
+       - วลีที่ระบุ filter ได้ชัดเจน → ใช้ทำ query
+       - วลีที่ต้องอนุมานจากบริบท → อนุมานแล้วใช้ทำ query
+       - วลีที่เป็นเนื้อหาสินค้า → ส่งไป Stage 2
+       - วลีที่เป็นคำถาม/คำแนะนำ → ส่งไป Stage 3
+    3. สร้าง MongoDB query จากวลีที่ระบุ filter ได้
+    4. ส่งวลีที่เหลือไปให้ Stage อื่นๆ
     """
-    normalized_input = normalize_text_advanced(user_input)
+    print(f"[Stage 1] Processing input: {user_input}")
+    
+    # Enhanced phrase segmentation and analysis
+    phrase_analysis = enhanced_contextual_phrase_segmentation(user_input)
     
     # Load database information
-    schema_data, categories_data = load_database_schema()
+    schema_data, categories_data, keyword_mapping = load_database_schema()
     category_mapping = get_comprehensive_category_mapping()
     
     # Get actual database fields
@@ -306,115 +486,121 @@ async def stage1_basic_query_builder(user_input: str) -> Dict[str, Any]:
     if schema_data and 'properties' in schema_data:
         actual_fields = list(schema_data['properties'].keys())
     
+    # Extract phrases for each stage
+    stage1_filter_phrases = phrase_analysis["stage_assignments"]["stage1_filter"]
+    stage1_inference_phrases = phrase_analysis["stage_assignments"]["stage1_inference"]
+    stage2_content_phrases = phrase_analysis["stage_assignments"]["stage2_content"]
+    stage3_question_phrases = phrase_analysis["stage_assignments"]["stage3_questions"]
+    
+    print(f"[Stage 1] Phrase Analysis:")
+    print(f"  - Filter phrases: {stage1_filter_phrases}")
+    print(f"  - Inference phrases: {stage1_inference_phrases}")
+    print(f"  - Content phrases: {stage2_content_phrases}")
+    print(f"  - Question phrases: {stage3_question_phrases}")
+    
     # Convert data to strings to avoid f-string issues
     fields_str = str(actual_fields)
     categories_str = json.dumps(categories_data, ensure_ascii=False)
     mapping_str = json.dumps(category_mapping, ensure_ascii=False, indent=2)
+    keyword_str = json.dumps(keyword_mapping, ensure_ascii=False, indent=2)
     
-    prompt = f"""
-คุณคือ Stage 1 Query Builder - มีหน้าที่สร้าง MongoDB Query พื้นฐานเท่านั้น
+    # Create analysis summary for the LLM
+    phrase_summary = {
+        "stage1_filter": stage1_filter_phrases,
+        "stage1_inference": stage1_inference_phrases,
+        "stage2_content": stage2_content_phrases,
+        "stage3_questions": stage3_question_phrases
+    }
+    phrase_summary_str = json.dumps(phrase_summary, ensure_ascii=False, indent=2)
+    
+    prompt = """
+คุณคือ Stage 1 Context Analyzer และ Query Builder - วิเคราะห์บริบทและสร้าง MongoDB Query
 
 **USER INPUT:** "{user_input}"
-**NORMALIZED:** "{normalized_input}"
+
+**PHRASE ANALYSIS RESULT:** {phrase_summary_str}
 
 **DATABASE FIELDS:** {fields_str}
 **AVAILABLE CATEGORIES:** {categories_str}
 **CATEGORY MAPPING:** {mapping_str}
+**KEYWORD TO CATEGORY MAPPING:** {keyword_str}""".format(
+        user_input=user_input,
+        phrase_summary_str=phrase_summary_str,
+        fields_str=fields_str,
+        categories_str=categories_str,
+        mapping_str=mapping_str,
+        keyword_str=keyword_str
+    ) + """
 
-**STAGE 1 RESPONSIBILITIES (จำกัดเฉพาะนี้):**
-1. **CONTEXTUAL INPUT ANALYSIS** - วิเคราะห์บริบทของประโยคก่อนแยกคำ
-2. **SEMANTIC PHRASE SEGMENTATION** - แยกวลีตามความหมาย ไม่ใช่แยกคำเดี่ยว
-3. **BASIC CATEGORY IDENTIFICATION** - หาหมวดหมู่หลักจาก input หรืออนุมานจากบริบท
-4. **BUDGET EXTRACTION** - หาราคาที่ผู้ใช้ระบุ  
-5. **BASIC FIELD MAPPING** - แปลงเป็น MongoDB query ง่ายๆ
-6. **NO CONTENT ANALYSIS** - ห้ามวิเคราะห์ title/description/brand/specs
-7. **SMART CATEGORY INFERENCE** - หากไม่มีหมวดหมู่ชัดเจน ให้อนุมานจากบริบท
+**NEW STAGE 1 RESPONSIBILITIES:**
+1. **รับผลการแยกวลี** - จากระบบ enhanced phrase segmentation
+2. **วิเคราะห์วลี Stage 1 Filter** - วลีที่ระบุ filter ได้ชัดเจน
+3. **วิเคราะห์วลี Stage 1 Inference** - วลีที่ต้องอนุมานหมวดหมู่
+4. **สร้าง MongoDB Query** - จากวลีที่วิเคราะห์ได้
+5. **ส่งวลีที่เหลือ** - ไปให้ Stage 2 และ 3
 
-**STRICT RULES - STAGE 1:**
+**ANALYSIS PROCESS:**
+
+**Phase 1: วิเคราะห์วลี stage1_filter (ระบุ filter ได้ชัดเจน)**
+- วลีเหล่านี้ควรนำมาสร้าง MongoDB query ทันที
+- ตัวอย่าง: "อยากได้คอม", "โน้ตบุ๊ก", "งบ 20000"
+- วิเคราะห์: หมวดหมู่ (cateName) และราคา (salePrice)
+
+**Phase 2: วิเคราะห์วลี stage1_inference (ต้องอนุมานจากบริบท)**
+- วลีที่เป็นชื่อผลิตภัณฑ์เฉพาะ แต่ต้องอนุมานหมวดหมู่
+- ตัวอย่าง: "Ryzen 5 5600G" → อนุมาน CPU/Desktop PC/Notebooks
+- วิเคราะห์แล้วเพิ่มเข้า query และส่งไป Stage 2 ด้วย
+
+**Phase 3: ส่งวลีที่เหลือไปให้ Stage อื่น**
+- stage2_content: วลีเนื้อหาสินค้า (แบรนด์, การใช้งาน, สเปค)
+- stage3_questions: วลีคำถาม/คำแนะนำ
+
+**RULES:**
 - ใช้เฉพาะ: stockQuantity, cateName, salePrice
 - ห้ามใช้: title, description, $regex, $or สำหรับ content
-- ห้ามวิเคราะห์: แบรนด์, สเปค, การใช้งานเฉพาะ, ชื่อเกม
-- **CONTEXTUAL UNDERSTANDING**: อ่านบริบทประโยคก่อนแยกส่วน
-- ถ้าไม่แน่ใจ = ไม่ใส่ใน query (ให้ Stage 2 จัดการ)
-- **CATEGORY INFERENCE**: หากไม่มีหมวดหมู่ชัดเจน แต่มีชื่อผลิตภัณฑ์เฉพาะ ให้อนุมานหมวดหมู่ที่เกี่ยวข้อง
-- **NON-FILTER PHRASES**: คำขอ/คำถาม เช่น "แนะนำหน่อย", "รุ่นไหนดี", "เล่นเกมได้ไหม" ไม่ใช่ filter - ข้ามไป
+- ใช้ KEYWORD TO CATEGORY MAPPING เพื่อจับคู่คำไทย/อังกฤษกับ cateName
+- **MONGODB SYNTAX**: 
+  - Single: "cateName": "Notebooks"
+  - Multiple: "cateName": {"$in": ["Desktop PC", "Notebooks"]}
 
-**CONTEXTUAL ANALYSIS EXAMPLES:**
-
-Input: "โน้ตบุ๊ค ASUS งบ 20000"
-CONTEXT ANALYSIS:
-- "โน้ตบุ๊ก" = หมวดหมู่สินค้า → cateName: "Notebooks" ✅ (can filter)
-- "ASUS" = ชื่อแบรนด์ → ❌ (cannot filter in Stage 1 - leave for Stage 2)  
-- "งบ 20000" = งบประมาณ → salePrice: max 20000 ✅ (can filter)
+**EXAMPLES:**
 
 Input: "อยากได้คอมทำงานกราฟิก แนะนำหน่อย"
-CONTEXT ANALYSIS:
-- "อยากได้คอม" = ต้องการคอมพิวเตอร์ → cateName: ["Desktop PC", "Notebooks"] ✅ (can filter)
-- "ทำงานกราฟิก" = การใช้งานเฉพาะ → ❌ (usage analysis - leave for Stage 2)
-- "แนะนำหน่อย" = คำขอคำแนะนำ → ❌ (NON-FILTER request phrase - skip completely)
+Analysis:
+- stage1_filter: ["อยากได้คอม"] → cateName: {"$in": ["Desktop PC", "All in One PC (AIO)", "Computer Set JIB"]}
+- stage2_content: ["ทำงานกราฟิก"] → ส่งไป Stage 2 
+- stage3_questions: ["แนะนำหน่อย"] → ส่งไป Stage 3
 
-Input: "คอมเล่นเกม valorant ไม่เกิน 30000"
-CONTEXT ANALYSIS:
-- "คอม" = ประเภทสินค้า → cateName: ["Desktop PC", "Gaming Notebooks"] ✅ (can filter)
-- "เล่นเกม valorant" = การใช้งานและเกมเฉพาะ → ❌ (usage + game analysis - leave for Stage 2)
-- "ไม่เกิน 30000" = งบประมาณ → salePrice: max 30000 ✅ (can filter)
+Input: "โน้ตบุ๊ค ASUS งบ 20000"  
+Analysis:
+- stage1_filter: ["โน้ตบุ๊ก", "งบ 20000"] → cateName: "Notebooks", salePrice: {"$lte": 20000}
+- stage2_content: ["ASUS"] → ส่งไป Stage 2
 
 Input: "Ryzen 5 5600G เล่นเกมได้ไหม"
-CONTEXT ANALYSIS:
-- "Ryzen 5 5600G" = ชื่อ CPU รุ่นเฉพาะ → ❌ (specific product name - leave for Stage 2)
-- "เล่นเกมได้ไหม" = คำถามการใช้งาน → ❌ (usage question - leave for Stage 2)
-- ไม่มีหมวดหมู่ชัดเจน → ต้องให้ Stage 1 อนุมาน CPU, Notebooks → cateName: ["CPU", "Notebooks"] ✅ (inferred category)
-
-**BUDGET PATTERNS:**
-- "งบ X", "ไม่เกิน X", "ประมาณ X", "ราคา X บาท" → max budget
-- "X-Y บาท", "ระหว่าง X ถึง Y" → price range
-
-**PHRASE SEGMENTATION RULES:**
-
-**การแยกวลีตามบริบท (ไม่ใช่แยกคำเดี่ยว):**
-1. **Product Category Phrases**: "อยากได้คอม", "ต้องการโน้ตบุ๊ก", "หาการ์ดจอ"
-2. **Usage Phrases**: "ทำงานกราฟิก", "เล่นเกม valorant", "ใช้งานออฟฟิศ"
-3. **Budget Phrases**: "งบ 15000", "ไม่เกิน 20000", "ราคาประมาณ 30000"
-4. **Brand Phrases**: "ยี่ห้อ ASUS", "HP หรือ Dell", "MSI gaming"
-5. **Request Phrases**: "แนะนำหน่อย", "รุ่นไหนดี", "มีอะไรบ้าง"
-
-**ตัวอย่างการแยกวลีที่ถูกต้อง:**
-- "อยากได้คอมทำงานกราฟิก แนะนำหน่อย" 
-  → ["อยากได้คอม", "ทำงานกราฟิก", "แนะนำหน่อย"]
-- "โน้ตบุ๊ค ASUS งบ 20000"
-  → ["โน้ตบุ๊ก", "ASUS", "งบ 20000"]
-- "การ์ดจอเล่นเกม RTX 4060"
-  → ["การ์ดจอ", "เล่นเกม", "RTX 4060"]
-
-**THAI COMPUTER CONTEXT:**
-- "คอม" = อาจหมายถึง Desktop PC, All in One PC, Mini PC, หรือแม้แต่ Notebooks
-- "เครื่อง" = คอมพิวเตอร์ทั่วไป
-
-**CRITICAL MONGODB SYNTAX:**
-- **Single category**: "cateName": "Notebooks"
-- **Multiple categories**: "cateName": {{"$in": ["Desktop PC", "Notebooks"]}}
-- **NEVER**: "cateName": ["Desktop PC", "Notebooks"] (ผิด!)
-- **ALWAYS use $in for arrays!**
+Analysis:
+- stage1_inference: ["Ryzen 5 5600G"] → อนุมาน cateName: {"$in": ["CPU", "Desktop PC", "Notebooks"]}
+- stage2_content: ["Ryzen 5 5600G"] → ส่งไป Stage 2 ด้วย (ชื่อเฉพาะ)
+- stage3_questions: ["เล่นเกมได้ไหม"] → ส่งไป Stage 3
 
 ตอบใน JSON:
-{{
-  "mongoQuery": {{
-    "stockQuantity": {{"$gt": 0}}
-    // เพิ่มเฉพาะ cateName และ salePrice ตามที่วิเคราะห์ได้
-  }},
-  "processedTerms": {{
+{
+  "mongoQuery": {
+    "stockQuantity": {"$gt": 0}
+    // เพิ่ม cateName และ salePrice ตามที่วิเคราะห์ได้
+  },
+  "processedTerms": {
+    "stage1_filter_used": ["วลี stage1_filter ที่ใช้ทำ query"],
+    "stage1_inference_used": ["วลี stage1_inference ที่อนุมานและใช้ทำ query"],
+    "stage2_content_phrases": ["วลีส่งไป Stage 2"],
+    "stage3_question_phrases": ["วลีส่งไป Stage 3"],
     "category": "หมวดหมู่ที่ระบุได้",
-    "budget": {{"max": number}},
-    "segmentedPhrases": ["วลีที่แยกตามบริบท"],
-    "used": ["วลีที่ใช้ใน query แล้ว"],
-    "remaining": ["วลีที่เหลือให้ Stage 2 วิเคราะห์"],
-    "analysis": "อธิบายการแยกวลีและเหตุผล"
-  }},
-  "reasoning": "อธิบายว่าใช้คำไหนทำ query และคำไหนปล่อยให้ Stage 2",
-  "queryType": "basic_filter"
-}}
-
-**สำคัญ:** Stage 1 ทำหน้าที่กรองพื้นฐานเท่านั้น - ห้ามเก่ง!
+    "budget": {"max": number},
+    "used": ["รวมวลีที่ใช้ใน Stage 1"],
+    "remaining": ["รวมวลีส่งไป Stage 2+3"]
+  },
+  "reasoning": "อธิบายการวิเคราะห์แต่ละวลีและการตัดสินใจ",
+  "queryType": "three_stage_analysis"
+}
 """
 
     try:
@@ -442,17 +628,29 @@ CONTEXT ANALYSIS:
         query = result["mongoQuery"]
         validated_query = validate_stage1_query(query, actual_fields)
         
+        # Enhanced return structure for 3-stage system
+        processed_terms = result["processedTerms"]
+        
         return {
             "query": validated_query,
-            "processedTerms": result["processedTerms"],
-            "reasoning": result.get("reasoning", "Stage 1 basic filtering"),
-            "queryType": result.get("queryType", "basic_filter"),
+            "processedTerms": processed_terms,
+            "phraseAnalysis": phrase_analysis,
+            "stageAssignments": {
+                "stage1_filter": processed_terms.get("stage1_filter_used", []),
+                "stage1_inference": processed_terms.get("stage1_inference_used", []),
+                "stage2_content": processed_terms.get("stage2_content_phrases", []),
+                "stage3_questions": processed_terms.get("stage3_question_phrases", [])
+            },
+            "reasoning": result.get("reasoning", "Stage 1 three-stage analysis"),
+            "queryType": result.get("queryType", "three_stage_analysis"),
             "confidence": 0.8
         }
         
     except Exception as error:
         print(f"Stage 1 query generation error: {error}")
-        return generate_stage1_fallback(normalized_input, categories_data)
+        # Enhanced fallback that includes phrase analysis
+        fallback_result = generate_stage1_fallback_enhanced(user_input, phrase_analysis, categories_data)
+        return fallback_result
 
 def validate_stage1_query(query: Dict[str, Any], actual_fields: List[str]) -> Dict[str, Any]:
     """Validate Stage 1 query - only allow basic fields"""
@@ -467,8 +665,34 @@ def validate_stage1_query(query: Dict[str, Any], actual_fields: List[str]) -> Di
     
     return validated_query
 
+def generate_stage1_fallback_enhanced(input_text: str, phrase_analysis: Dict[str, Any], categories_data: List[str]) -> Dict[str, Any]:
+    """Enhanced fallback for Stage 1 when LLM fails"""
+    processed_terms = extract_basic_entities(input_text, categories_data)
+    query = build_basic_query(processed_terms)
+    
+    # Try to extract stage assignments from phrase analysis if available
+    stage_assignments = {
+        "stage1_filter": [],
+        "stage1_inference": [],
+        "stage2_content": [],
+        "stage3_questions": []
+    }
+    
+    if phrase_analysis:
+        stage_assignments = phrase_analysis.get("stage_assignments", stage_assignments)
+    
+    return {
+        "query": query,
+        "processedTerms": processed_terms,
+        "phraseAnalysis": phrase_analysis,
+        "stageAssignments": stage_assignments,
+        "reasoning": "Stage 1 fallback - basic pattern matching with phrase analysis",
+        "queryType": "three_stage_fallback",
+        "confidence": 0.6
+    }
+
 def generate_stage1_fallback(input_text: str, categories_data: List[str]) -> Dict[str, Any]:
-    """Fallback for Stage 1 when LLM fails"""
+    """Legacy fallback for Stage 1 when LLM fails - backward compatibility"""
     processed_terms = extract_basic_entities(input_text, categories_data)
     query = build_basic_query(processed_terms)
     
@@ -484,6 +708,12 @@ def extract_basic_entities(input_text: str, categories_data: List[str]) -> Dict[
     """Extract basic entities for Stage 1 fallback with improved phrase segmentation"""
     normalized_input = normalize_text_advanced(input_text.lower())
     category_mapping = get_comprehensive_category_mapping()
+    
+    # Load keyword mapping from file
+    try:
+        _, _, keyword_mapping = load_database_schema()
+    except:
+        keyword_mapping = {}
     
     # Improved contextual phrase segmentation
     segmented_phrases = contextual_phrase_segmentation(input_text)
@@ -506,20 +736,38 @@ def extract_basic_entities(input_text: str, categories_data: List[str]) -> Dict[
         if is_non_filter_phrase(phrase):
             continue  # Skip completely - don't use for filtering
         
-        # Direct category matching first
-        for thai_term, english_categories in category_mapping.items():
-            if thai_term in phrase_lower:
-                # Collect all matching categories
-                matching_cats = [cat for cat in english_categories if cat in categories_data]
-                if matching_cats:
-                    found_categories.extend(matching_cats)
-                    processed_terms["used"].append(phrase)
-                    # Remove from remaining
-                    if phrase in processed_terms["remaining"]:
-                        processed_terms["remaining"].remove(phrase)
-                    break
-        else:
-            # If no direct category match, try to infer from product names
+        # First try keyword mapping (more accurate)
+        category_found = False
+        for cateName, keywords in keyword_mapping.items():
+            if cateName in categories_data:  # Only consider available categories
+                for keyword in keywords:
+                    if keyword.lower() in phrase_lower:
+                        found_categories.append(cateName)
+                        processed_terms["used"].append(phrase)
+                        if phrase in processed_terms["remaining"]:
+                            processed_terms["remaining"].remove(phrase)
+                        category_found = True
+                        break
+            if category_found:
+                break
+        
+        # If not found in keyword mapping, try direct category matching
+        if not category_found:
+            for thai_term, english_categories in category_mapping.items():
+                if thai_term in phrase_lower:
+                    # Collect all matching categories
+                    matching_cats = [cat for cat in english_categories if cat in categories_data]
+                    if matching_cats:
+                        found_categories.extend(matching_cats)
+                        processed_terms["used"].append(phrase)
+                        # Remove from remaining
+                        if phrase in processed_terms["remaining"]:
+                            processed_terms["remaining"].remove(phrase)
+                        category_found = True
+                        break
+        
+        # If still no category found, try to infer from product names
+        if not category_found:
             if is_specific_product_name(phrase):
                 inferred_cats = infer_categories_from_product_name(phrase, categories_data)
                 if inferred_cats:
@@ -669,23 +917,36 @@ async def stage2_content_analyzer(
 ) -> List[Product]:
     """
     Stage 2 LLM: Deep content analysis and product matching
-    Analyzes remaining terms from Stage 1 and matches against title/description
+    Analyzes content-related phrases from Stage 1 and matches against title/description
     """
     if len(products) == 0:
         return []
     
-    processed_terms = stage1_result.get("processedTerms", {})
-    remaining_terms = processed_terms.get("remaining", [user_input])
-    used_terms = processed_terms.get("used", [])
+    # Get content phrases from Stage 1's enhanced analysis
+    stage_assignments = stage1_result.get("stageAssignments", {})
+    content_phrases = stage_assignments.get("stage2_content", [])
     
-    # If no remaining terms to analyze, just sort by popularity
-    if not remaining_terms or (len(remaining_terms) == 1 and remaining_terms[0] == user_input and not used_terms):
-        print("[Stage 2] No specific analysis needed - using popularity sorting")
+    # Backward compatibility - if no stage assignments, use old method
+    if not content_phrases:
+        processed_terms = stage1_result.get("processedTerms", {})
+        content_phrases = processed_terms.get("remaining", [user_input])
+        used_terms = processed_terms.get("used", [])
+    else:
+        # Get used terms from Stage 1 filtering and inference
+        used_terms = (stage_assignments.get("stage1_filter", []) + 
+                     stage_assignments.get("stage1_inference", []))
+    
+    print(f"[Stage 2] Content phrases to analyze: {content_phrases}")
+    print(f"[Stage 2] Stage 1 used terms: {used_terms}")
+    
+    # If no content phrases to analyze, just sort by popularity
+    if not content_phrases or (len(content_phrases) == 1 and content_phrases[0] == user_input and not used_terms):
+        print("[Stage 2] No specific content analysis needed - using popularity sorting")
         return sorted(products, 
                      key=lambda p: (p.productView, p.rating, -p.salePrice), 
                      reverse=True)[:8]
     
-    print(f"[Stage 2] Analyzing {len(products)} products for remaining terms: {remaining_terms}")
+    print(f"[Stage 2] Analyzing {len(products)} products for content phrases: {content_phrases}")
     
     # Prepare products info for LLM analysis
     products_info = ""
@@ -716,10 +977,9 @@ Stock: {p.stockQuantity}
 **ORIGINAL USER INPUT:** "{user_input}"
 
 **STAGE 1 PROCESSING RESULTS:**
-- **Segmented Phrases:** {processed_terms.get('segmentedPhrases', [])}
+- **Stage Assignments:** {json.dumps(stage_assignments, ensure_ascii=False, indent=2)}
 - **Used Phrases (Stage 1 กรองแล้ว):** {used_terms}
-- **Remaining Phrases (ให้ Stage 2 วิเคราะห์):** {remaining_terms}
-- **Segmentation Analysis:** {processed_terms.get('analysis', 'N/A')}
+- **Content Phrases (ให้ Stage 2 วิเคราะห์):** {content_phrases}
 - **MongoDB Query Applied:** {json.dumps(stage1_result.get('query', {}), ensure_ascii=False)}
 - **Stage 1 Reasoning:** {stage1_result.get('reasoning', 'N/A')}
 
@@ -727,10 +987,10 @@ Stock: {p.stockQuantity}
 {products_info}
 
 **STAGE 2 ANALYSIS MISSION:**
-1. **วิเคราะห์ Remaining Terms** - ในสิ่งที่ Stage 1 ยังไม่ได้จัดการ
+1. **วิเคราะห์ Content Phrases** - วลีที่ Stage 1 ส่งมาให้วิเคราะห์เนื้อหา
 2. **ระบุประเภทข้อมูล** - แบรนด์ (title), สเปค/การใช้งาน (description), คุณสมบัติ (title+description)
 3. **จับคู่เนื้อหา** - ค้นหาในฟิลด์ที่เหมาะสม (title สำหรับแบรนด์, description สำหรับการใช้งาน)
-4. **ให้คะแนนความเหมาะสม** - 0-100 ตามความตรงกับ remaining terms
+4. **ให้คะแนนความเหมาะสม** - 0-100 ตามความตรงกับ content phrases
 5. **SPECIFIC PRODUCT MATCHING** - ถ้าวลีดูเหมือนชื่อผลิตภัณฑ์เฉพาะ ให้ค้นหาในชื่อก่อน แล้วคำอธิบายตามลำดับ
 
 **ANALYSIS GUIDELINES:**
@@ -757,19 +1017,19 @@ Stock: {p.stockQuantity}
 - "RTX", "GTX", "Intel", "AMD", "Core i7"
 
 **SCORING CRITERIA:**
-- **Perfect Match** (90-100): ตรงทุกคำใน remaining terms
-- **Good Match** (70-89): ตรงส่วนใหญ่ของ remaining terms  
-- **Partial Match** (50-69): ตรงบางส่วนของ remaining terms
+- **Perfect Match** (90-100): ตรงทุกคำใน content phrases
+- **Good Match** (70-89): ตรงส่วนใหญ่ของ content phrases  
+- **Partial Match** (50-69): ตรงบางส่วนของ content phrases
 - **Weak Match** (30-49): ตรงเล็กน้อยหรือคล้ายกัน
 - **No Match** (0-29): ไม่ตรงเลย
 
 **EXAMPLES:**
 
-Remaining: ["ASUS"] → ดู title ว่ามี "ASUS" หรือไม่
-Remaining: ["valorant"] → ดู description ว่าระบุสเปคเล่น valorant ได้หรือไม่  
-Remaining: ["RGB", "mechanical"] → ดู title+description ว่ามีคำเหล่านี้หรือไม่
-Remaining: ["Ryzen 5 5600G"] → ดู title ว่าผลิตภัณฑ์ไหนมีคำว่า "5600G" หรือ "RYZEN 5 5600G" ใน title
-Remaining: ["RTX 4060"] → ดู title ว่าผลิตภัณฑ์ไหนมีคำว่า "RTX 4060" ใน title
+Content: ["ASUS"] → ดู title ว่ามี "ASUS" หรือไม่
+Content: ["ทำงานกราฟิก"] → ดู description ว่าระบุสเปคทำงานกราฟิกได้หรือไม่  
+Content: ["RGB", "mechanical"] → ดู title+description ว่ามีคำเหล่านี้หรือไม่
+Content: ["Ryzen 5 5600G"] → ดู title ว่าผลิตภัณฑ์ไหนมีคำว่า "5600G" หรือ "RYZEN 5 5600G" ใน title
+Content: ["RTX 4060"] → ดู title ว่าผลิตภัณฑ์ไหนมีคำว่า "RTX 4060" ใน title
 
 **SPECIFIC PRODUCT NAME MATCHING STRATEGY:**
 1. **แยกคำสำคัญ**: "Ryzen 5 5600G" → ["Ryzen", "5600G", "AMD"]
@@ -790,11 +1050,11 @@ Remaining: ["RTX 4060"] → ดู title ว่าผลิตภัณฑ์ไ
       }}
     }}
   ],
-  "analysisSummary": "สรุปการวิเคราะห์ remaining terms",
+  "analysisSummary": "สรุปการวิเคราะห์ content phrases",
   "unmatchedTerms": ["คำที่ไม่พบในสินค้าใดเลย"]
 }}
 
-**สำคัญ:** วิเคราะห์เฉพาะ remaining terms ที่ Stage 1 ยังไม่ได้จัดการ!
+**สำคัญ:** วิเคราะห์เฉพาะ content phrases ที่ Stage 1 ส่งมาให้วิเคราะห์เนื้อหา!
 """
 
     try:
@@ -828,7 +1088,7 @@ Remaining: ["RTX 4060"] → ดู title ว่าผลิตภัณฑ์ไ
         
         print(f"[Stage 2] Selected {len(filtered_products)} products from {len(products)}")
         
-        # If no products matched remaining terms, return top products by popularity
+        # If no products matched content phrases, return top products by popularity
         if not filtered_products:
             print("[Stage 2] No content matches found - falling back to popularity sorting")
             return sorted(products, 

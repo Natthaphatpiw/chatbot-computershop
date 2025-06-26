@@ -2,7 +2,7 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 from typing import List, Dict, Any
 from app.models import Product, ExtractedEntities
 from app.services.two_stage_llm import (
-    stage1_basic_query_builder,
+    stage1_context_analysis_and_query_builder,
     stage2_content_analyzer,
     stage3_question_answerer,
     generate_two_stage_response,
@@ -19,8 +19,8 @@ class ITStoreChatbot:
             # 1. Normalize text with advanced Thai language processing
             normalized_input = normalize_text_advanced(user_input)
             
-            # 2. Stage 1: Basic query building for initial filtering
-            stage1_result = await stage1_basic_query_builder(user_input)
+            # 2. Stage 1: Context analysis and query building for initial filtering
+            stage1_result = await stage1_context_analysis_and_query_builder(user_input)
             
             # 3. Search products with Stage 1 query
             raw_products = await self.search_products_precise(stage1_result["query"])
@@ -39,10 +39,12 @@ class ITStoreChatbot:
                 raw_products
             )
             
-            # 6. Stage 3: Extract question phrases and answer them
-            remaining_phrases = stage1_result.get("processedTerms", {}).get("remaining", [])
-            question_phrases = extract_question_phrases(remaining_phrases)
+            # 6. Stage 3: Use question phrases from Stage 1 analysis
+            stage_assignments = stage1_result.get("stageAssignments", {})
+            question_phrases = stage_assignments.get("stage3_questions", [])
             stage3_answer = ""
+            
+            print(f"[Main] Stage 3 question phrases: {question_phrases}")
             
             if question_phrases and len(filtered_products) > 0:
                 stage3_answer = await stage3_question_answerer(
