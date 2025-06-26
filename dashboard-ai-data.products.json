@@ -1,0 +1,1871 @@
+[{
+  "_id": {
+    "$oid": "685827c746b7696e78ce8765"
+  },
+  "productCode": "X1504GA-NJ322W",
+  "byOrder": false,
+  "byOrderDate": null,
+  "cateId": 25,
+  "cateName": "Notebooks",
+  "categoryId": 121,
+  "clearAnce": false,
+  "compare": {
+    "cate_sub1": "24",
+    "cate_sub2": "25",
+    "cate_sub3": "121",
+    "compare_lv": 2
+  },
+  "createdAt": {
+    "$date": "2024-02-20T09:06:22.000Z"
+  },
+  "description": "• Intel Core i3-N305\r\n• 8GB DDR4 (ON BOARD)\r\n• 512GB PCIe/NVMe M.2 SSD\r\n• 15.6\" FHD Anti-Glare\r\n• Intel UHD Graphics (Integrated)\r\n• Windows 11 Home",
+  "freeShipping": true,
+  "highlights_detail": "",
+  "id": 65577,
+  "images": {
+    "original": {
+      "width": "0",
+      "heigth": "0",
+      "url": [
+        "https://www.jib.co.th/img_master/product/original/20240220162537_65577_287_1.jpg"
+      ]
+    },
+    "icon": {
+      "width": "50px",
+      "heigth": "50px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/icon/20240220162537_65577_287_1.jpg"
+      ]
+    },
+    "small": {
+      "width": "150px",
+      "heigth": "150px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/small/20240220162537_65577_287_1.jpg"
+      ]
+    },
+    "medium": {
+      "width": "280px",
+      "heigth": "280px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/medium/20240220162537_65577_287_1.jpg"
+      ]
+    },
+    "large": {
+      "width": "550px",
+      "heigth": "550px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/big/20240220162537_65577_287_1.jpg"
+      ]
+    }
+  },
+  "logo": {
+    "freeItemOri": {
+      "url": [
+        "https://www.jib.co.th/img_master/images/promotion/original/20240827102346_1.jpg"
+      ],
+      "title": [
+        "( เฉพาะสั่งซื้อ ออนไลน์ เท่านั้น )  GIFTBOX JIB SMILEY FOR NOTEBOOK"
+      ]
+    },
+    "shipping": [
+      {
+        "url": "",
+        "title": "",
+        "key": "",
+        "locationStatus": ""
+      }
+    ],
+    "installment": {
+      "url": [
+        "https://www.jib.co.th/img_master/img/zero-percent-kbank.png?v=1001",
+        "https://www.jib.co.th/img_master/img/610517-logo-ktc2020-04-01.png?v=1003",
+        "https://www.jib.co.th/img_master/img/logo-ผ่อนสินค้า-06.png?v=1004",
+        "https://www.jib.co.th/img_master/img/kfc0-2020-03-24.png?v=1003"
+      ],
+      "title": [
+        "เจไอบี มอบเเคมเปญ เเบ่งชำระ 0% ผ่านบัตรเครดิตของธนาคารกสิกรไทย",
+        "เจไอบี มอบแคมเปญ แบ่งชำระ 0% ผ่านบัตรเครดิตของธนาคารกรุงไทย",
+        "เจไอบี มอบแคมเปญ แบ่งชำระ 0% ผ่านบัตรเครดิตของธนาคารกรุงศรีอยุธยา",
+        "เจไอบี มอบแคมเปญ แบ่งชำระ 0% ผ่านบัตรกรุงศรี เฟิร์สช้อยส์"
+      ],
+      "logo_search": [
+        "kbank",
+        "ktc",
+        "kcc",
+        "kfc"
+      ]
+    },
+    "freeItem": {
+      "url": [
+        "https://www.jib.co.th/img_master/images/promotion/small/20240827102346_1.jpg"
+      ],
+      "title": [
+        "( เฉพาะสั่งซื้อ ออนไลน์ เท่านั้น )  GIFTBOX JIB SMILEY FOR NOTEBOOK"
+      ]
+    },
+    "code": "",
+    "code_discount": "",
+    "show_on_web": "",
+    "supplier": [],
+    "c_icon": null,
+    "icon_ai": null,
+    "icon_ict": null,
+    "icon_asus": null
+  },
+  "preOrder": false,
+  "preOrderDate": null,
+  "price": 11990,
+  "product360": true,
+  "productLocation": "75",
+  "productView": 38351,
+  "product_ict": null,
+  "product_ict_comment": null,
+  "product_warranty_2_year": null,
+  "product_warranty_3_year": null,
+  "product_windows": null,
+  "rating": 0,
+  "salePrice": 10990,
+  "stockQuantity": 2,
+  "title": "NOTEBOOK (โน้ตบุ๊ค) ASUS VIVOBOOK GO 15 X1504GA-NJ322W (MIXED BLACK)",
+  "totalReviews": 0,
+  "updatedAt": {
+    "$date": "2024-08-09T14:18:59.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "685827c746b7696e78ce8766"
+  },
+  "productCode": "M1504FA-NJ516W",
+  "byOrder": false,
+  "byOrderDate": null,
+  "cateId": 25,
+  "cateName": "Notebooks",
+  "categoryId": 121,
+  "clearAnce": false,
+  "compare": {
+    "cate_sub1": "24",
+    "cate_sub2": "25",
+    "cate_sub3": "121",
+    "compare_lv": 2
+  },
+  "createdAt": {
+    "$date": "2024-03-29T15:37:19.000Z"
+  },
+  "description": "• AMD Ryzen 5 7520U\r\n• 8GB LPDDR5 (ON BOARD)\r\n• 512GB PCIe/NVMe M.2 SSD\r\n• 15.6\" FHD Anti-Glare\r\n• AMD Radeon Graphics (Integrated)\r\n• Windows 11 Home",
+  "freeShipping": true,
+  "highlights_detail": "",
+  "id": 66554,
+  "images": {
+    "original": {
+      "width": "0",
+      "heigth": "0",
+      "url": [
+        "https://www.jib.co.th/img_master/product/original/20240401145220_66554_287_1.jpg"
+      ]
+    },
+    "icon": {
+      "width": "50px",
+      "heigth": "50px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/icon/20240401145220_66554_287_1.jpg"
+      ]
+    },
+    "small": {
+      "width": "150px",
+      "heigth": "150px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/small/20240401145220_66554_287_1.jpg"
+      ]
+    },
+    "medium": {
+      "width": "280px",
+      "heigth": "280px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/medium/20240401145220_66554_287_1.jpg"
+      ]
+    },
+    "large": {
+      "width": "550px",
+      "heigth": "550px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/big/20240401145220_66554_287_1.jpg"
+      ]
+    }
+  },
+  "logo": {
+    "freeItemOri": {
+      "url": [
+        "https://www.jib.co.th/img_master/images/promotion/original/20240827102346_1.jpg"
+      ],
+      "title": [
+        "( เฉพาะสั่งซื้อ ออนไลน์ เท่านั้น )  GIFTBOX JIB SMILEY FOR NOTEBOOK"
+      ]
+    },
+    "shipping": [
+      {
+        "url": "",
+        "title": "",
+        "key": "",
+        "locationStatus": ""
+      }
+    ],
+    "installment": {
+      "url": [
+        "https://www.jib.co.th/img_master/img/zero-percent-kbank.png?v=1001",
+        "https://www.jib.co.th/img_master/img/610517-logo-ktc2020-04-01.png?v=1003",
+        "https://www.jib.co.th/img_master/img/logo-ผ่อนสินค้า-06.png?v=1004",
+        "https://www.jib.co.th/img_master/img/kfc0-2020-03-24.png?v=1003"
+      ],
+      "title": [
+        "เจไอบี มอบเเคมเปญ เเบ่งชำระ 0% ผ่านบัตรเครดิตของธนาคารกสิกรไทย",
+        "เจไอบี มอบแคมเปญ แบ่งชำระ 0% ผ่านบัตรเครดิตของธนาคารกรุงไทย",
+        "เจไอบี มอบแคมเปญ แบ่งชำระ 0% ผ่านบัตรเครดิตของธนาคารกรุงศรีอยุธยา",
+        "เจไอบี มอบแคมเปญ แบ่งชำระ 0% ผ่านบัตรกรุงศรี เฟิร์สช้อยส์"
+      ],
+      "logo_search": [
+        "kbank",
+        "ktc",
+        "kcc",
+        "kfc"
+      ]
+    },
+    "freeItem": {
+      "url": [
+        "https://www.jib.co.th/img_master/images/promotion/small/20240827102346_1.jpg"
+      ],
+      "title": [
+        "( เฉพาะสั่งซื้อ ออนไลน์ เท่านั้น )  GIFTBOX JIB SMILEY FOR NOTEBOOK"
+      ]
+    },
+    "code": "",
+    "code_discount": "",
+    "show_on_web": "",
+    "supplier": [],
+    "c_icon": null,
+    "icon_ai": null,
+    "icon_ict": null,
+    "icon_asus": null
+  },
+  "preOrder": false,
+  "preOrderDate": null,
+  "price": 13990,
+  "product360": true,
+  "productLocation": "75",
+  "productView": 35075,
+  "product_ict": null,
+  "product_ict_comment": null,
+  "product_warranty_2_year": null,
+  "product_warranty_3_year": null,
+  "product_windows": null,
+  "rating": 0,
+  "salePrice": 12990,
+  "stockQuantity": 3,
+  "title": "NOTEBOOK (โน้ตบุ๊ค) ASUS VIVOBOOK GO 15 M1504FA-NJ516W (MIXED BLACK)",
+  "totalReviews": 0,
+  "updatedAt": {
+    "$date": "2024-10-08T10:54:36.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "685827c946b7696e78ce877e"
+  },
+  "productCode": "NX.J23ST.002",
+  "byOrder": false,
+  "byOrderDate": null,
+  "cateId": 25,
+  "cateName": "Notebooks",
+  "categoryId": 32,
+  "clearAnce": false,
+  "compare": {
+    "cate_sub1": "24",
+    "cate_sub2": "25",
+    "cate_sub3": "32",
+    "compare_lv": 2
+  },
+  "createdAt": {
+    "$date": "2024-11-13T15:54:14.000Z"
+  },
+  "description": "• Intel Core i3-1305U\r\n• 8GB DDR5\r\n• 512GB NVMe PCIe M.2 SSD\r\n• 16\" WUXGA (1920 x 1200) IPS Non-Touch\r\n• Intel Graphics (Integrated)\r\n• Windows 11 Home + Office Home & Student 2021",
+  "freeShipping": true,
+  "highlights_detail": "",
+  "id": 72074,
+  "images": {
+    "original": {
+      "width": "0",
+      "heigth": "0",
+      "url": [
+        "https://www.jib.co.th/img_master/product/original/20241114133718_72074_287_1.jpg"
+      ]
+    },
+    "icon": {
+      "width": "50px",
+      "heigth": "50px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/icon/20241114133718_72074_287_1.jpg"
+      ]
+    },
+    "small": {
+      "width": "150px",
+      "heigth": "150px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/small/20241114133718_72074_287_1.jpg"
+      ]
+    },
+    "medium": {
+      "width": "280px",
+      "heigth": "280px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/medium/20241114133718_72074_287_1.jpg"
+      ]
+    },
+    "large": {
+      "width": "550px",
+      "heigth": "550px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/big/20241114133718_72074_287_1.jpg"
+      ]
+    }
+  },
+  "logo": {
+    "freeItemOri": {
+      "url": [
+        "https://www.jib.co.th/img_master/images/promotion/original/20230627152606_1.jpg",
+        "https://www.jib.co.th/img_master/images/promotion/original/20240827102346_1.jpg"
+      ],
+      "title": [
+        "( เฉพาะสั่งซื้อ ออนไลน์ เท่านั้น ) BAG ACER PREDATOR CANVAS SLIM BACKPACK",
+        "( เฉพาะสั่งซื้อ ออนไลน์ เท่านั้น )  GIFTBOX JIB SMILEY FOR NOTEBOOK"
+      ]
+    },
+    "shipping": [
+      {
+        "url": "",
+        "title": "",
+        "key": "",
+        "locationStatus": ""
+      }
+    ],
+    "installment": {
+      "url": [
+        "https://www.jib.co.th/img_master/img/zero-percent-kbank.png?v=1001",
+        "https://www.jib.co.th/img_master/img/610517-logo-ktc2020-04-01.png?v=1003",
+        "https://www.jib.co.th/img_master/img/logo-ผ่อนสินค้า-06.png?v=1004",
+        "https://www.jib.co.th/img_master/img/kfc0-2020-03-24.png?v=1003"
+      ],
+      "title": [
+        "เจไอบี มอบเเคมเปญ เเบ่งชำระ 0% ผ่านบัตรเครดิตของธนาคารกสิกรไทย",
+        "เจไอบี มอบแคมเปญ แบ่งชำระ 0% ผ่านบัตรเครดิตของธนาคารกรุงไทย",
+        "เจไอบี มอบแคมเปญ แบ่งชำระ 0% ผ่านบัตรเครดิตของธนาคารกรุงศรีอยุธยา",
+        "เจไอบี มอบแคมเปญ แบ่งชำระ 0% ผ่านบัตรกรุงศรี เฟิร์สช้อยส์"
+      ],
+      "logo_search": [
+        "kbank",
+        "ktc",
+        "kcc",
+        "kfc"
+      ]
+    },
+    "freeItem": {
+      "url": [
+        "https://www.jib.co.th/img_master/images/promotion/small/20230627152606_1.jpg",
+        "https://www.jib.co.th/img_master/images/promotion/small/20240827102346_1.jpg"
+      ],
+      "title": [
+        "( เฉพาะสั่งซื้อ ออนไลน์ เท่านั้น ) BAG ACER PREDATOR CANVAS SLIM BACKPACK",
+        "( เฉพาะสั่งซื้อ ออนไลน์ เท่านั้น )  GIFTBOX JIB SMILEY FOR NOTEBOOK"
+      ]
+    },
+    "code": "",
+    "code_discount": "",
+    "show_on_web": "",
+    "supplier": [],
+    "c_icon": "",
+    "icon_ai": null,
+    "icon_ict": null,
+    "icon_asus": null
+  },
+  "preOrder": false,
+  "preOrderDate": null,
+  "price": 12990,
+  "product360": true,
+  "productLocation": "75",
+  "productView": 15026,
+  "product_ict": null,
+  "product_ict_comment": null,
+  "product_warranty_2_year": null,
+  "product_warranty_3_year": null,
+  "product_windows": null,
+  "rating": 0,
+  "salePrice": 12990,
+  "stockQuantity": 3,
+  "title": "NOTEBOOK (โน้ตบุ๊ค) ACER ASPIRE LITE16 AL16-52P-331E (GRAY)",
+  "totalReviews": 0,
+  "updatedAt": {
+    "$date": "2024-11-14T15:19:51.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "685827c946b7696e78ce8787"
+  },
+  "productCode": "B12T5PA#AKL",
+  "byOrder": false,
+  "byOrderDate": null,
+  "cateId": 25,
+  "cateName": "Notebooks",
+  "categoryId": 123,
+  "clearAnce": false,
+  "compare": {
+    "cate_sub1": "24",
+    "cate_sub2": "25",
+    "cate_sub3": "123",
+    "compare_lv": 2
+  },
+  "createdAt": {
+    "$date": "2024-10-03T09:27:49.000Z"
+  },
+  "description": "• AMD Ryzen 3 7320U\r\n• 8GB LPDDR5\r\n• 512GB NVMe PCIe M.2 SSD\r\n• 15.6\" FHD (1920x1080) IPS Non-Touch\r\n• AMD Radeon Graphics (Integrated)\r\n• Windows 11 Home + Office Home & Student + 365 Basic",
+  "freeShipping": true,
+  "highlights_detail": "",
+  "id": 71070,
+  "images": {
+    "original": {
+      "width": "0",
+      "heigth": "0",
+      "url": [
+        "https://www.jib.co.th/img_master/product/original/20241003152707_71070_287_1.jpg"
+      ]
+    },
+    "icon": {
+      "width": "50px",
+      "heigth": "50px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/icon/20241003152707_71070_287_1.jpg"
+      ]
+    },
+    "small": {
+      "width": "150px",
+      "heigth": "150px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/small/20241003152707_71070_287_1.jpg"
+      ]
+    },
+    "medium": {
+      "width": "280px",
+      "heigth": "280px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/medium/20241003152707_71070_287_1.jpg"
+      ]
+    },
+    "large": {
+      "width": "550px",
+      "heigth": "550px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/big/20241003152707_71070_287_1.jpg"
+      ]
+    }
+  },
+  "logo": {
+    "freeItemOri": {
+      "url": [
+        "https://www.jib.co.th/img_master/images/promotion/original/20240404113757_1.jpg",
+        "https://www.jib.co.th/img_master/images/promotion/original/20240827102346_1.jpg"
+      ],
+      "title": [
+        "( เฉพาะสั่งซื้อ ออนไลน์ เท่านั้น ) BAG HP PRELUDE 15.6 BACKPACK (2Z8P3AA)",
+        "( เฉพาะสั่งซื้อ ออนไลน์ เท่านั้น )  GIFTBOX JIB SMILEY FOR NOTEBOOK"
+      ]
+    },
+    "shipping": [
+      {
+        "url": "",
+        "title": "",
+        "key": "",
+        "locationStatus": ""
+      }
+    ],
+    "installment": {
+      "url": [
+        "https://www.jib.co.th/img_master/img/zero-percent-kbank.png?v=1001",
+        "https://www.jib.co.th/img_master/img/610517-logo-ktc2020-04-01.png?v=1003",
+        "https://www.jib.co.th/img_master/img/logo-ผ่อนสินค้า-06.png?v=1004",
+        "https://www.jib.co.th/img_master/img/kfc0-2020-03-24.png?v=1003"
+      ],
+      "title": [
+        "เจไอบี มอบเเคมเปญ เเบ่งชำระ 0% ผ่านบัตรเครดิตของธนาคารกสิกรไทย",
+        "เจไอบี มอบแคมเปญ แบ่งชำระ 0% ผ่านบัตรเครดิตของธนาคารกรุงไทย",
+        "เจไอบี มอบแคมเปญ แบ่งชำระ 0% ผ่านบัตรเครดิตของธนาคารกรุงศรีอยุธยา",
+        "เจไอบี มอบแคมเปญ แบ่งชำระ 0% ผ่านบัตรกรุงศรี เฟิร์สช้อยส์"
+      ],
+      "logo_search": [
+        "kbank",
+        "ktc",
+        "kcc",
+        "kfc"
+      ]
+    },
+    "freeItem": {
+      "url": [
+        "https://www.jib.co.th/img_master/images/promotion/small/20240404113757_1.jpg",
+        "https://www.jib.co.th/img_master/images/promotion/small/20240827102346_1.jpg"
+      ],
+      "title": [
+        "( เฉพาะสั่งซื้อ ออนไลน์ เท่านั้น ) BAG HP PRELUDE 15.6 BACKPACK (2Z8P3AA)",
+        "( เฉพาะสั่งซื้อ ออนไลน์ เท่านั้น )  GIFTBOX JIB SMILEY FOR NOTEBOOK"
+      ]
+    },
+    "code": "",
+    "code_discount": "",
+    "show_on_web": "",
+    "supplier": [],
+    "c_icon": "",
+    "icon_ai": null,
+    "icon_ict": null,
+    "icon_asus": null
+  },
+  "preOrder": false,
+  "preOrderDate": null,
+  "price": 12490,
+  "product360": true,
+  "productLocation": "75",
+  "productView": 12833,
+  "product_ict": null,
+  "product_ict_comment": null,
+  "product_warranty_2_year": null,
+  "product_warranty_3_year": null,
+  "product_windows": null,
+  "rating": 0,
+  "salePrice": 12490,
+  "stockQuantity": 1,
+  "title": "NOTEBOOK (โน้ตบุ๊ค) HP 15-FC0285AU",
+  "totalReviews": 0,
+  "updatedAt": {
+    "$date": "2024-12-03T15:19:41.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "685827c946b7696e78ce878a"
+  },
+  "productCode": "X1504VA-NJ348WA",
+  "byOrder": false,
+  "byOrderDate": null,
+  "cateId": 25,
+  "cateName": "Notebooks",
+  "categoryId": 121,
+  "clearAnce": false,
+  "compare": {
+    "cate_sub1": "24",
+    "cate_sub2": "25",
+    "cate_sub3": "121",
+    "compare_lv": 2
+  },
+  "createdAt": {
+    "$date": "2024-11-15T13:41:15.000Z"
+  },
+  "description": "• Intel Core i3-1315U\r\n• 8GB DDR4 (On Board)\r\n• 512GB PCIe 3/NVMe M.2 SSD\r\n• 15.6\" FHD (1920 x 1080) 60Hz 250nits 45% NTSC\r\n• Intel UHD Graphics (Integrated)\r\n• Windows 11 Home / Office Home 2024 / Microsoft 365 Basic",
+  "freeShipping": true,
+  "highlights_detail": "",
+  "id": 72147,
+  "images": {
+    "original": {
+      "width": "0",
+      "heigth": "0",
+      "url": [
+        "https://www.jib.co.th/img_master/product/original/20241119150906_72147_287_1.jpg"
+      ]
+    },
+    "icon": {
+      "width": "50px",
+      "heigth": "50px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/icon/20241119150906_72147_287_1.jpg"
+      ]
+    },
+    "small": {
+      "width": "150px",
+      "heigth": "150px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/small/20241119150906_72147_287_1.jpg"
+      ]
+    },
+    "medium": {
+      "width": "280px",
+      "heigth": "280px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/medium/20241119150906_72147_287_1.jpg"
+      ]
+    },
+    "large": {
+      "width": "550px",
+      "heigth": "550px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/big/20241119150906_72147_287_1.jpg"
+      ]
+    }
+  },
+  "logo": {
+    "freeItemOri": {
+      "url": [
+        "https://www.jib.co.th/img_master/images/promotion/original/20240827102346_1.jpg"
+      ],
+      "title": [
+        "( เฉพาะสั่งซื้อ ออนไลน์ เท่านั้น )  GIFTBOX JIB SMILEY FOR NOTEBOOK"
+      ]
+    },
+    "shipping": [
+      {
+        "url": "",
+        "title": "",
+        "key": "",
+        "locationStatus": ""
+      }
+    ],
+    "installment": {
+      "url": [
+        "https://www.jib.co.th/img_master/img/zero-percent-kbank.png?v=1001",
+        "https://www.jib.co.th/img_master/img/610517-logo-ktc2020-04-01.png?v=1003",
+        "https://www.jib.co.th/img_master/img/logo-ผ่อนสินค้า-06.png?v=1004",
+        "https://www.jib.co.th/img_master/img/kfc0-2020-03-24.png?v=1003"
+      ],
+      "title": [
+        "เจไอบี มอบเเคมเปญ เเบ่งชำระ 0% ผ่านบัตรเครดิตของธนาคารกสิกรไทย",
+        "เจไอบี มอบแคมเปญ แบ่งชำระ 0% ผ่านบัตรเครดิตของธนาคารกรุงไทย",
+        "เจไอบี มอบแคมเปญ แบ่งชำระ 0% ผ่านบัตรเครดิตของธนาคารกรุงศรีอยุธยา",
+        "เจไอบี มอบแคมเปญ แบ่งชำระ 0% ผ่านบัตรกรุงศรี เฟิร์สช้อยส์"
+      ],
+      "logo_search": [
+        "kbank",
+        "ktc",
+        "kcc",
+        "kfc"
+      ]
+    },
+    "freeItem": {
+      "url": [
+        "https://www.jib.co.th/img_master/images/promotion/small/20240827102346_1.jpg"
+      ],
+      "title": [
+        "( เฉพาะสั่งซื้อ ออนไลน์ เท่านั้น )  GIFTBOX JIB SMILEY FOR NOTEBOOK"
+      ]
+    },
+    "code": "",
+    "code_discount": "",
+    "show_on_web": "",
+    "supplier": [],
+    "c_icon": null,
+    "icon_ai": null,
+    "icon_ict": null,
+    "icon_asus": null
+  },
+  "preOrder": false,
+  "preOrderDate": null,
+  "price": 13990,
+  "product360": true,
+  "productLocation": "75",
+  "productView": 12275,
+  "product_ict": "0",
+  "product_ict_comment": ".",
+  "product_warranty_2_year": null,
+  "product_warranty_3_year": null,
+  "product_windows": null,
+  "rating": 0,
+  "salePrice": 12990,
+  "stockQuantity": 3,
+  "title": "NOTEBOOK (โน้ตบุ๊ค) ASUS VIVOBOOK 15 X1504VA-NJ348WA (QUIET BLUE)",
+  "totalReviews": 0,
+  "updatedAt": {
+    "$date": "2024-11-20T11:20:15.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "685827c946b7696e78ce878b"
+  },
+  "productCode": "M1504FA-NJ548WA",
+  "byOrder": false,
+  "byOrderDate": null,
+  "cateId": 25,
+  "cateName": "Notebooks",
+  "categoryId": 121,
+  "clearAnce": false,
+  "compare": {
+    "cate_sub1": "24",
+    "cate_sub2": "25",
+    "cate_sub3": "121",
+    "compare_lv": 2
+  },
+  "createdAt": {
+    "$date": "2025-01-21T14:23:15.000Z"
+  },
+  "description": "• AMD Ryzen 5 7520U\r\n• 16GB LPDDR5 (On board)\r\n• 512GB PCIe 3/NVMe M.2\r\n• 15.6\" FHD (1920 x 1080) 60Hz Anti-glare 45% NTSC\r\n• AMD Radeon Graphics (Integrated)\r\n• Windows 11 Home / Office Home 2024 / Microsoft 365 Basic",
+  "freeShipping": true,
+  "highlights_detail": "",
+  "id": 73768,
+  "images": {
+    "original": {
+      "width": "0",
+      "heigth": "0",
+      "url": [
+        "https://www.jib.co.th/img_master/product/original/20250123154443_73768_287_1.jpg"
+      ]
+    },
+    "icon": {
+      "width": "50px",
+      "heigth": "50px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/icon/20250123154443_73768_287_1.jpg"
+      ]
+    },
+    "small": {
+      "width": "150px",
+      "heigth": "150px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/small/20250123154443_73768_287_1.jpg"
+      ]
+    },
+    "medium": {
+      "width": "280px",
+      "heigth": "280px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/medium/20250123154443_73768_287_1.jpg"
+      ]
+    },
+    "large": {
+      "width": "550px",
+      "heigth": "550px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/big/20250123154443_73768_287_1.jpg"
+      ]
+    }
+  },
+  "logo": {
+    "freeItemOri": {
+      "url": [
+        "https://www.jib.co.th/img_master/images/promotion/original/20240827102346_1.jpg"
+      ],
+      "title": [
+        "( เฉพาะสั่งซื้อ ออนไลน์ เท่านั้น )  GIFTBOX JIB SMILEY FOR NOTEBOOK"
+      ]
+    },
+    "shipping": [
+      {
+        "url": "",
+        "title": "",
+        "key": "",
+        "locationStatus": ""
+      }
+    ],
+    "installment": {
+      "url": [
+        "https://www.jib.co.th/img_master/img/zero-percent-kbank.png?v=1001",
+        "https://www.jib.co.th/img_master/img/610517-logo-ktc2020-04-01.png?v=1003",
+        "https://www.jib.co.th/img_master/img/logo-ผ่อนสินค้า-06.png?v=1004",
+        "https://www.jib.co.th/img_master/img/kfc0-2020-03-24.png?v=1003"
+      ],
+      "title": [
+        "เจไอบี มอบเเคมเปญ เเบ่งชำระ 0% ผ่านบัตรเครดิตของธนาคารกสิกรไทย",
+        "เจไอบี มอบแคมเปญ แบ่งชำระ 0% ผ่านบัตรเครดิตของธนาคารกรุงไทย",
+        "เจไอบี มอบแคมเปญ แบ่งชำระ 0% ผ่านบัตรเครดิตของธนาคารกรุงศรีอยุธยา",
+        "เจไอบี มอบแคมเปญ แบ่งชำระ 0% ผ่านบัตรกรุงศรี เฟิร์สช้อยส์"
+      ],
+      "logo_search": [
+        "kbank",
+        "ktc",
+        "kcc",
+        "kfc"
+      ]
+    },
+    "freeItem": {
+      "url": [
+        "https://www.jib.co.th/img_master/images/promotion/small/20240827102346_1.jpg"
+      ],
+      "title": [
+        "( เฉพาะสั่งซื้อ ออนไลน์ เท่านั้น )  GIFTBOX JIB SMILEY FOR NOTEBOOK"
+      ]
+    },
+    "code": "",
+    "code_discount": "",
+    "show_on_web": "",
+    "supplier": [],
+    "c_icon": null,
+    "icon_ai": null,
+    "icon_ict": null,
+    "icon_asus": null
+  },
+  "preOrder": false,
+  "preOrderDate": null,
+  "price": 16490,
+  "product360": true,
+  "productLocation": "75",
+  "productView": 12187,
+  "product_ict": null,
+  "product_ict_comment": null,
+  "product_warranty_2_year": null,
+  "product_warranty_3_year": null,
+  "product_windows": null,
+  "rating": 0,
+  "salePrice": 14990,
+  "stockQuantity": 4,
+  "title": "NOTEBOOK (โน้ตบุ๊ค) ASUS VIVOBOOK GO 15 M1504FA-NJ548WA (MIXED BLACK)",
+  "totalReviews": 0,
+  "updatedAt": {
+    "$date": "2025-01-24T15:56:29.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "685827ca46b7696e78ce8793"
+  },
+  "productCode": "M1502YA-NJ755WA",
+  "byOrder": false,
+  "byOrderDate": null,
+  "cateId": 25,
+  "cateName": "Notebooks",
+  "categoryId": 121,
+  "clearAnce": false,
+  "compare": {
+    "cate_sub1": "24",
+    "cate_sub2": "25",
+    "cate_sub3": "121",
+    "compare_lv": 2
+  },
+  "createdAt": {
+    "$date": "2025-02-08T09:25:35.000Z"
+  },
+  "description": "• AMD Ryzen 7 5825U\r\n• 16GB (8GB x 2) DDR4\r\n• 512GB PCIe 3/NVMe M.2 SSD\r\n• 15.6\" FHD (1920 x 1080) 60Hz 250nits 45% NTSC\r\n• AMD Radeon Graphics (Integrated)\r\n• Windows 11 Home / Office Home 2024 / Microsoft 365 Basic",
+  "freeShipping": true,
+  "highlights_detail": "",
+  "id": 74254,
+  "images": {
+    "original": {
+      "width": "0",
+      "heigth": "0",
+      "url": [
+        "https://www.jib.co.th/img_master/product/original/20250215143244_74254_287_1.jpg"
+      ]
+    },
+    "icon": {
+      "width": "50px",
+      "heigth": "50px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/icon/20250215143244_74254_287_1.jpg"
+      ]
+    },
+    "small": {
+      "width": "150px",
+      "heigth": "150px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/small/20250215143244_74254_287_1.jpg"
+      ]
+    },
+    "medium": {
+      "width": "280px",
+      "heigth": "280px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/medium/20250215143244_74254_287_1.jpg"
+      ]
+    },
+    "large": {
+      "width": "550px",
+      "heigth": "550px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/big/20250215143244_74254_287_1.jpg"
+      ]
+    }
+  },
+  "logo": {
+    "freeItemOri": {
+      "url": [
+        "https://www.jib.co.th/img_master/images/promotion/original/20240827102346_1.jpg"
+      ],
+      "title": [
+        "( เฉพาะสั่งซื้อ ออนไลน์ เท่านั้น )  GIFTBOX JIB SMILEY FOR NOTEBOOK"
+      ]
+    },
+    "shipping": [
+      {
+        "url": "",
+        "title": "",
+        "key": "",
+        "locationStatus": ""
+      }
+    ],
+    "installment": {
+      "url": [
+        "https://www.jib.co.th/img_master/img/zero-percent-kbank.png?v=1001",
+        "https://www.jib.co.th/img_master/img/610517-logo-ktc2020-04-01.png?v=1003",
+        "https://www.jib.co.th/img_master/img/logo-ผ่อนสินค้า-06.png?v=1004",
+        "https://www.jib.co.th/img_master/img/kfc0-2020-03-24.png?v=1003"
+      ],
+      "title": [
+        "เจไอบี มอบเเคมเปญ เเบ่งชำระ 0% ผ่านบัตรเครดิตของธนาคารกสิกรไทย",
+        "เจไอบี มอบแคมเปญ แบ่งชำระ 0% ผ่านบัตรเครดิตของธนาคารกรุงไทย",
+        "เจไอบี มอบแคมเปญ แบ่งชำระ 0% ผ่านบัตรเครดิตของธนาคารกรุงศรีอยุธยา",
+        "เจไอบี มอบแคมเปญ แบ่งชำระ 0% ผ่านบัตรกรุงศรี เฟิร์สช้อยส์"
+      ],
+      "logo_search": [
+        "kbank",
+        "ktc",
+        "kcc",
+        "kfc"
+      ]
+    },
+    "freeItem": {
+      "url": [
+        "https://www.jib.co.th/img_master/images/promotion/small/20240827102346_1.jpg"
+      ],
+      "title": [
+        "( เฉพาะสั่งซื้อ ออนไลน์ เท่านั้น )  GIFTBOX JIB SMILEY FOR NOTEBOOK"
+      ]
+    },
+    "code": "",
+    "code_discount": "",
+    "show_on_web": "",
+    "supplier": [],
+    "c_icon": null,
+    "icon_ai": null,
+    "icon_ict": null,
+    "icon_asus": null
+  },
+  "preOrder": false,
+  "preOrderDate": null,
+  "price": 16990,
+  "product360": true,
+  "productLocation": "75",
+  "productView": 9911,
+  "product_ict": null,
+  "product_ict_comment": null,
+  "product_warranty_2_year": null,
+  "product_warranty_3_year": null,
+  "product_windows": null,
+  "rating": 0,
+  "salePrice": 14990,
+  "stockQuantity": 8,
+  "title": "NOTEBOOK (โน้ตบุ๊ค) ASUS VIVOBOOK 15 M1502YA-NJ755WA (QUIET BLUE)",
+  "totalReviews": 0,
+  "updatedAt": {
+    "$date": "2025-03-10T11:31:38.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "685827ca46b7696e78ce87a0"
+  },
+  "productCode": "X1504VA-ROSE365WA",
+  "byOrder": false,
+  "byOrderDate": null,
+  "cateId": 25,
+  "cateName": "Notebooks",
+  "categoryId": 121,
+  "clearAnce": false,
+  "compare": {
+    "cate_sub1": "24",
+    "cate_sub2": "25",
+    "cate_sub3": "121",
+    "compare_lv": 2
+  },
+  "createdAt": {
+    "$date": "2024-12-03T15:25:37.000Z"
+  },
+  "description": "• Intel Core i3-1315U\r\n• 8GB DDR4 (On Board)\r\n• 512GB PCIe 3/NVMe M.2 SSD\r\n• 15.6\" FHD (1920 x 1080) 60Hz 250nits 45% NTSC Anti-glare\r\n• Intel UHD Graphics (Integrated)\r\n• Windows 11 Home / Office Home 2024 / Microsoft 365 Basic",
+  "freeShipping": true,
+  "highlights_detail": "",
+  "id": 72607,
+  "images": {
+    "original": {
+      "width": "0",
+      "heigth": "0",
+      "url": [
+        "https://www.jib.co.th/img_master/product/original/20241206172431_72607_287_1.jpg"
+      ]
+    },
+    "icon": {
+      "width": "50px",
+      "heigth": "50px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/icon/20241206172431_72607_287_1.jpg"
+      ]
+    },
+    "small": {
+      "width": "150px",
+      "heigth": "150px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/small/20241206172431_72607_287_1.jpg"
+      ]
+    },
+    "medium": {
+      "width": "280px",
+      "heigth": "280px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/medium/20241206172431_72607_287_1.jpg"
+      ]
+    },
+    "large": {
+      "width": "550px",
+      "heigth": "550px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/big/20241206172431_72607_287_1.jpg"
+      ]
+    }
+  },
+  "logo": {
+    "freeItemOri": {
+      "url": [
+        "https://www.jib.co.th/img_master/images/promotion/original/20240827102346_1.jpg"
+      ],
+      "title": [
+        "( เฉพาะสั่งซื้อ ออนไลน์ เท่านั้น )  GIFTBOX JIB SMILEY FOR NOTEBOOK"
+      ]
+    },
+    "shipping": [
+      {
+        "url": "",
+        "title": "",
+        "key": "",
+        "locationStatus": ""
+      }
+    ],
+    "installment": {
+      "url": [
+        "https://www.jib.co.th/img_master/img/zero-percent-kbank.png?v=1001",
+        "https://www.jib.co.th/img_master/img/610517-logo-ktc2020-04-01.png?v=1003",
+        "https://www.jib.co.th/img_master/img/logo-ผ่อนสินค้า-06.png?v=1004",
+        "https://www.jib.co.th/img_master/img/kfc0-2020-03-24.png?v=1003"
+      ],
+      "title": [
+        "เจไอบี มอบเเคมเปญ เเบ่งชำระ 0% ผ่านบัตรเครดิตของธนาคารกสิกรไทย",
+        "เจไอบี มอบแคมเปญ แบ่งชำระ 0% ผ่านบัตรเครดิตของธนาคารกรุงไทย",
+        "เจไอบี มอบแคมเปญ แบ่งชำระ 0% ผ่านบัตรเครดิตของธนาคารกรุงศรีอยุธยา",
+        "เจไอบี มอบแคมเปญ แบ่งชำระ 0% ผ่านบัตรกรุงศรี เฟิร์สช้อยส์"
+      ],
+      "logo_search": [
+        "kbank",
+        "ktc",
+        "kcc",
+        "kfc"
+      ]
+    },
+    "freeItem": {
+      "url": [
+        "https://www.jib.co.th/img_master/images/promotion/small/20240827102346_1.jpg"
+      ],
+      "title": [
+        "( เฉพาะสั่งซื้อ ออนไลน์ เท่านั้น )  GIFTBOX JIB SMILEY FOR NOTEBOOK"
+      ]
+    },
+    "code": "",
+    "code_discount": "",
+    "show_on_web": "",
+    "supplier": [],
+    "c_icon": "",
+    "icon_ai": null,
+    "icon_ict": null,
+    "icon_asus": null
+  },
+  "preOrder": false,
+  "preOrderDate": null,
+  "price": 13990,
+  "product360": true,
+  "productLocation": "75",
+  "productView": 6920,
+  "product_ict": "0",
+  "product_ict_comment": ".",
+  "product_warranty_2_year": null,
+  "product_warranty_3_year": null,
+  "product_windows": null,
+  "rating": 0,
+  "salePrice": 13990,
+  "stockQuantity": 1,
+  "title": "NOTEBOOK (โน้ตบุ๊ค) ASUS VIVOBOOK 15 X1504VA-ROSE365WA (TERRA COTTA)",
+  "totalReviews": 0,
+  "updatedAt": {
+    "$date": "2024-12-09T15:51:41.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "685827cb46b7696e78ce87b1"
+  },
+  "productCode": "NX.D34ST.001",
+  "byOrder": false,
+  "byOrderDate": null,
+  "cateId": 25,
+  "cateName": "Notebooks",
+  "categoryId": 32,
+  "clearAnce": false,
+  "compare": {
+    "cate_sub1": "24",
+    "cate_sub2": "25",
+    "cate_sub3": "32",
+    "compare_lv": 2
+  },
+  "createdAt": {
+    "$date": "2025-06-05T08:50:04.000Z"
+  },
+  "description": "Acer Aspire Lite is a lightweight laptop combining sleek design and performance. Available in various styles, it suits every lifestyle while delivering an impressive computing and visual experience.\r\n\r\n• CPU : AMD Ryzen 5 7430U\r\n• RAM : 16GB DDR4\r\n• SSD : 512GB PCIe 3/NVMe M.2 SSD\r\n• Display : 15.6\" FHD (1920x1080) IPS\r\n• Graphics : AMD Radeon Graphics (Integrated)\r\n• Software : Windows 11 Home / Office Home & Student 2024 / Microsoft 365 Basic",
+  "freeShipping": true,
+  "highlights_detail": "",
+  "id": 77307,
+  "images": {
+    "original": {
+      "width": "0",
+      "heigth": "0",
+      "url": [
+        "https://www.jib.co.th/img_master/product/original/20250609151701_77307_287_1.jpg"
+      ]
+    },
+    "icon": {
+      "width": "50px",
+      "heigth": "50px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/icon/20250609151701_77307_287_1.jpg"
+      ]
+    },
+    "small": {
+      "width": "150px",
+      "heigth": "150px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/small/20250609151701_77307_287_1.jpg"
+      ]
+    },
+    "medium": {
+      "width": "280px",
+      "heigth": "280px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/medium/20250609151701_77307_287_1.jpg"
+      ]
+    },
+    "large": {
+      "width": "550px",
+      "heigth": "550px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/big/20250609151701_77307_287_1.jpg"
+      ]
+    }
+  },
+  "logo": {
+    "freeItemOri": {
+      "url": [
+        "https://www.jib.co.th/img_master/images/promotion/original/20230627152606_1.jpg",
+        "https://www.jib.co.th/img_master/images/promotion/original/20240827102346_1.jpg"
+      ],
+      "title": [
+        "( เฉพาะสั่งซื้อ ออนไลน์ เท่านั้น ) BAG ACER PREDATOR CANVAS SLIM BACKPACK",
+        "( เฉพาะสั่งซื้อ ออนไลน์ เท่านั้น )  GIFTBOX JIB SMILEY FOR NOTEBOOK"
+      ]
+    },
+    "shipping": [
+      {
+        "url": "",
+        "title": "",
+        "key": "",
+        "locationStatus": ""
+      }
+    ],
+    "installment": {
+      "url": [
+        "https://www.jib.co.th/img_master/img/zero-percent-kbank.png?v=1001",
+        "https://www.jib.co.th/img_master/img/610517-logo-ktc2020-04-01.png?v=1003",
+        "https://www.jib.co.th/img_master/img/logo-ผ่อนสินค้า-06.png?v=1004",
+        "https://www.jib.co.th/img_master/img/kfc0-2020-03-24.png?v=1003"
+      ],
+      "title": [
+        "เจไอบี มอบเเคมเปญ เเบ่งชำระ 0% ผ่านบัตรเครดิตของธนาคารกสิกรไทย",
+        "เจไอบี มอบแคมเปญ แบ่งชำระ 0% ผ่านบัตรเครดิตของธนาคารกรุงไทย",
+        "เจไอบี มอบแคมเปญ แบ่งชำระ 0% ผ่านบัตรเครดิตของธนาคารกรุงศรีอยุธยา",
+        "เจไอบี มอบแคมเปญ แบ่งชำระ 0% ผ่านบัตรกรุงศรี เฟิร์สช้อยส์"
+      ],
+      "logo_search": [
+        "kbank",
+        "ktc",
+        "kcc",
+        "kfc"
+      ]
+    },
+    "freeItem": {
+      "url": [
+        "https://www.jib.co.th/img_master/images/promotion/small/20230627152606_1.jpg",
+        "https://www.jib.co.th/img_master/images/promotion/small/20240827102346_1.jpg"
+      ],
+      "title": [
+        "( เฉพาะสั่งซื้อ ออนไลน์ เท่านั้น ) BAG ACER PREDATOR CANVAS SLIM BACKPACK",
+        "( เฉพาะสั่งซื้อ ออนไลน์ เท่านั้น )  GIFTBOX JIB SMILEY FOR NOTEBOOK"
+      ]
+    },
+    "code": "",
+    "code_discount": "",
+    "show_on_web": "",
+    "supplier": [],
+    "c_icon": "",
+    "icon_ai": null,
+    "icon_ict": null,
+    "icon_asus": null
+  },
+  "preOrder": false,
+  "preOrderDate": null,
+  "price": 14990,
+  "product360": true,
+  "productLocation": "75",
+  "productView": 1704,
+  "product_ict": null,
+  "product_ict_comment": null,
+  "product_warranty_2_year": null,
+  "product_warranty_3_year": null,
+  "product_windows": null,
+  "rating": 0,
+  "salePrice": 14990,
+  "stockQuantity": 3,
+  "title": "NOTEBOOK (โน้ตบุ๊ค) ACER ASPIRE LITE 15 AL15-42P-R3Q5 - SILVER",
+  "totalReviews": 0,
+  "updatedAt": {
+    "$date": "2025-06-14T16:23:10.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "685827d946b7696e78ce88b9"
+  },
+  "productCode": "82XQ00C1TA",
+  "byOrder": false,
+  "byOrderDate": null,
+  "cateId": 1468,
+  "cateName": "Ultrathin Notebooks",
+  "categoryId": 1820,
+  "clearAnce": false,
+  "compare": {
+    "cate_sub1": "24",
+    "cate_sub2": "1468",
+    "cate_sub3": "1820",
+    "compare_lv": 2
+  },
+  "createdAt": {
+    "$date": "2023-10-02T11:21:22.000Z"
+  },
+  "description": "• AMD Ryzen 3 7320U\r\n• 8GB LPDDR5 5500MHz (Onboard)\r\n• 512GB M.2 PCIe 4.0 NVMe \r\n• 15.6\" FHD IPS \r\n• AMD Radeon Graphics (Integrated)\r\n• Windows 11 Home\r\n",
+  "freeShipping": true,
+  "highlights_detail": "AMD Ryzen 3 7320U / 8GB LPDDR5 5500MHz / 512GB M.2 PCIe 4.0 NVMe / 15.6\" FHD IPS / AMD Radeon Graphics / Windows 11 Home\r\n",
+  "id": 62744,
+  "images": {
+    "original": {
+      "width": "0",
+      "heigth": "0",
+      "url": [
+        "https://www.jib.co.th/img_master/product/original/20231002164409_62744_287_1.jpg"
+      ]
+    },
+    "icon": {
+      "width": "50px",
+      "heigth": "50px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/icon/20231002164409_62744_287_1.jpg"
+      ]
+    },
+    "small": {
+      "width": "150px",
+      "heigth": "150px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/small/20231002164409_62744_287_1.jpg"
+      ]
+    },
+    "medium": {
+      "width": "280px",
+      "heigth": "280px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/medium/20231002164409_62744_287_1.jpg"
+      ]
+    },
+    "large": {
+      "width": "550px",
+      "heigth": "550px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/big/20231002164409_62744_287_1.jpg"
+      ]
+    }
+  },
+  "logo": {
+    "freeItemOri": {
+      "url": [
+        "https://www.jib.co.th/img_master/images/promotion/original/20240827102346_1.jpg",
+        "https://www.jib.co.th/img_master/images/promotion/original/20250425132737_1.jpg"
+      ],
+      "title": [
+        "( เฉพาะสั่งซื้อ ออนไลน์ เท่านั้น )  GIFTBOX JIB SMILEY FOR NOTEBOOK",
+        "( เฉพาะสั่งซื้อ ออนไลน์ เท่านั้น ) BAG LENOVO 16-inch Laptop Backpack B210 Black (ECO)"
+      ]
+    },
+    "shipping": [
+      {
+        "url": "",
+        "title": "",
+        "key": "",
+        "locationStatus": ""
+      }
+    ],
+    "installment": {
+      "url": [],
+      "title": [],
+      "logo_search": null
+    },
+    "freeItem": {
+      "url": [
+        "https://www.jib.co.th/img_master/images/promotion/small/20240827102346_1.jpg",
+        "https://www.jib.co.th/img_master/images/promotion/small/20250425132737_1.jpg"
+      ],
+      "title": [
+        "( เฉพาะสั่งซื้อ ออนไลน์ เท่านั้น )  GIFTBOX JIB SMILEY FOR NOTEBOOK",
+        "( เฉพาะสั่งซื้อ ออนไลน์ เท่านั้น ) BAG LENOVO 16-inch Laptop Backpack B210 Black (ECO)"
+      ]
+    },
+    "code": "LNVJN500",
+    "code_discount": "500",
+    "show_on_web": "1",
+    "supplier": [],
+    "c_icon": null,
+    "icon_ai": null,
+    "icon_ict": null,
+    "icon_asus": null
+  },
+  "preOrder": false,
+  "preOrderDate": null,
+  "price": 12490,
+  "product360": true,
+  "productLocation": "75",
+  "productView": 24046,
+  "product_ict": null,
+  "product_ict_comment": null,
+  "product_warranty_2_year": null,
+  "product_warranty_3_year": null,
+  "product_windows": null,
+  "rating": 0,
+  "salePrice": 10990,
+  "stockQuantity": 5,
+  "title": "NOTEBOOK (โน้ตบุ๊ค) LENOVO IDEAPAD SLIM 3 15AMN8-82XQ00C1TA (ARCTIC GREY)",
+  "totalReviews": 0,
+  "updatedAt": {
+    "$date": "2023-11-22T10:36:45.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "685827da46b7696e78ce88cf"
+  },
+  "productCode": "82X700BPTA",
+  "byOrder": false,
+  "byOrderDate": null,
+  "cateId": 1468,
+  "cateName": "Ultrathin Notebooks",
+  "categoryId": 1820,
+  "clearAnce": false,
+  "compare": {
+    "cate_sub1": "24",
+    "cate_sub2": "1468",
+    "cate_sub3": "1820",
+    "compare_lv": 2
+  },
+  "createdAt": {
+    "$date": "2024-08-19T15:11:57.000Z"
+  },
+  "description": "• Intel Core i3-1305U\r\n• 8GB LPDDR5 4800MHz (On Board)\r\n• 512GB PCIe 4/NVMe M.2 SSD\r\n• 15.6\" FHD (1920 x 1080) IPS Anti-glare 300nits\r\n• Intel UHD Graphics (Integrated)\r\n• Windows 11 Home",
+  "freeShipping": true,
+  "highlights_detail": "",
+  "id": 69960,
+  "images": {
+    "original": {
+      "width": "0",
+      "heigth": "0",
+      "url": [
+        "https://www.jib.co.th/img_master/product/original/20240820151629_69960_287_1.jpg"
+      ]
+    },
+    "icon": {
+      "width": "50px",
+      "heigth": "50px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/icon/20240820151629_69960_287_1.jpg"
+      ]
+    },
+    "small": {
+      "width": "150px",
+      "heigth": "150px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/small/20240820151629_69960_287_1.jpg"
+      ]
+    },
+    "medium": {
+      "width": "280px",
+      "heigth": "280px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/medium/20240820151629_69960_287_1.jpg"
+      ]
+    },
+    "large": {
+      "width": "550px",
+      "heigth": "550px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/big/20240820151629_69960_287_1.jpg"
+      ]
+    }
+  },
+  "logo": {
+    "freeItemOri": {
+      "url": [
+        "https://www.jib.co.th/img_master/images/promotion/original/20240827102346_1.jpg",
+        "https://www.jib.co.th/img_master/images/promotion/original/20250425132737_1.jpg"
+      ],
+      "title": [
+        "( เฉพาะสั่งซื้อ ออนไลน์ เท่านั้น )  GIFTBOX JIB SMILEY FOR NOTEBOOK",
+        "( เฉพาะสั่งซื้อ ออนไลน์ เท่านั้น ) BAG LENOVO 16-inch Laptop Backpack B210 Black (ECO)"
+      ]
+    },
+    "shipping": [
+      {
+        "url": "",
+        "title": "",
+        "key": "",
+        "locationStatus": ""
+      }
+    ],
+    "installment": {
+      "url": [
+        "https://www.jib.co.th/img_master/img/zero-percent-kbank.png?v=1001"
+      ],
+      "title": [
+        "เจไอบี มอบเเคมเปญ เเบ่งชำระ 0% ผ่านบัตรเครดิตของธนาคารกสิกรไทย"
+      ],
+      "logo_search": [
+        "kbank"
+      ]
+    },
+    "freeItem": {
+      "url": [
+        "https://www.jib.co.th/img_master/images/promotion/small/20240827102346_1.jpg",
+        "https://www.jib.co.th/img_master/images/promotion/small/20250425132737_1.jpg"
+      ],
+      "title": [
+        "( เฉพาะสั่งซื้อ ออนไลน์ เท่านั้น )  GIFTBOX JIB SMILEY FOR NOTEBOOK",
+        "( เฉพาะสั่งซื้อ ออนไลน์ เท่านั้น ) BAG LENOVO 16-inch Laptop Backpack B210 Black (ECO)"
+      ]
+    },
+    "code": "",
+    "code_discount": "",
+    "show_on_web": "",
+    "supplier": [],
+    "c_icon": null,
+    "icon_ai": null,
+    "icon_ict": null,
+    "icon_asus": null
+  },
+  "preOrder": false,
+  "preOrderDate": null,
+  "price": 12990,
+  "product360": true,
+  "productLocation": "75",
+  "productView": 11124,
+  "product_ict": null,
+  "product_ict_comment": null,
+  "product_warranty_2_year": null,
+  "product_warranty_3_year": null,
+  "product_windows": null,
+  "rating": 0,
+  "salePrice": 12490,
+  "stockQuantity": 1,
+  "title": "NOTEBOOK (โน้ตบุ๊ค) LENOVO IDEAPAD SLIM 3 15IRU8 82X700BPTA (ARCTIC GREY)",
+  "totalReviews": 0,
+  "updatedAt": {
+    "$date": "2024-08-20T15:34:53.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "685827dc46b7696e78ce88ea"
+  },
+  "productCode": "B7M-435TH",
+  "byOrder": false,
+  "byOrderDate": null,
+  "cateId": 1468,
+  "cateName": "Ultrathin Notebooks",
+  "categoryId": 1822,
+  "clearAnce": false,
+  "compare": {
+    "cate_sub1": "24",
+    "cate_sub2": "1468",
+    "cate_sub3": "1822",
+    "compare_lv": 2
+  },
+  "createdAt": {
+    "$date": "2024-12-24T09:32:02.000Z"
+  },
+  "description": "• AMD Ryzen 5 7430U\r\n• 8GB DDR4 3200\r\n• 512GB NVMe PCIe M.2 SSD\r\n• 15.6\" FHD (1920x1080) IPS 60Hz Non-Touch\r\n• AMD Radeon Graphics (Integrated)\r\n• Windows 11 Home + Office Home & Student 2021",
+  "freeShipping": true,
+  "highlights_detail": "",
+  "id": 73151,
+  "images": {
+    "original": {
+      "width": "0",
+      "heigth": "0",
+      "url": [
+        "https://www.jib.co.th/img_master/product/original/20250106154533_73151_287_1.jpg"
+      ]
+    },
+    "icon": {
+      "width": "50px",
+      "heigth": "50px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/icon/20250106154533_73151_287_1.jpg"
+      ]
+    },
+    "small": {
+      "width": "150px",
+      "heigth": "150px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/small/20250106154533_73151_287_1.jpg"
+      ]
+    },
+    "medium": {
+      "width": "280px",
+      "heigth": "280px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/medium/20250106154533_73151_287_1.jpg"
+      ]
+    },
+    "large": {
+      "width": "550px",
+      "heigth": "550px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/big/20250106154533_73151_287_1.jpg"
+      ]
+    }
+  },
+  "logo": {
+    "freeItemOri": {
+      "url": [
+        "https://www.jib.co.th/img_master/images/promotion/original/20240827102346_1.jpg",
+        "https://www.jib.co.th/img_master/images/promotion/original/20250602152147_1.jpg"
+      ],
+      "title": [
+        "( เฉพาะสั่งซื้อ ออนไลน์ เท่านั้น )  GIFTBOX JIB SMILEY FOR NOTEBOOK",
+        "( เฉพาะสั่งซื้อ ออนไลน์ เท่านั้น ) กระเป๋าผ้า CANVAS MSI LOGO"
+      ]
+    },
+    "shipping": [
+      {
+        "url": "",
+        "title": "",
+        "key": "",
+        "locationStatus": ""
+      }
+    ],
+    "installment": {
+      "url": [
+        "https://www.jib.co.th/img_master/img/zero-percent-kbank.png?v=1001",
+        "https://www.jib.co.th/img_master/img/610517-logo-ktc2020-04-01.png?v=1003",
+        "https://www.jib.co.th/img_master/img/logo-ผ่อนสินค้า-06.png?v=1004",
+        "https://www.jib.co.th/img_master/img/kfc0-2020-03-24.png?v=1003"
+      ],
+      "title": [
+        "เจไอบี มอบเเคมเปญ เเบ่งชำระ 0% ผ่านบัตรเครดิตของธนาคารกสิกรไทย",
+        "เจไอบี มอบแคมเปญ แบ่งชำระ 0% ผ่านบัตรเครดิตของธนาคารกรุงไทย",
+        "เจไอบี มอบแคมเปญ แบ่งชำระ 0% ผ่านบัตรเครดิตของธนาคารกรุงศรีอยุธยา",
+        "เจไอบี มอบแคมเปญ แบ่งชำระ 0% ผ่านบัตรกรุงศรี เฟิร์สช้อยส์"
+      ],
+      "logo_search": [
+        "kbank",
+        "ktc",
+        "kcc",
+        "kfc"
+      ]
+    },
+    "freeItem": {
+      "url": [
+        "https://www.jib.co.th/img_master/images/promotion/small/20240827102346_1.jpg",
+        "https://www.jib.co.th/img_master/images/promotion/small/20250602152147_1.jpg"
+      ],
+      "title": [
+        "( เฉพาะสั่งซื้อ ออนไลน์ เท่านั้น )  GIFTBOX JIB SMILEY FOR NOTEBOOK",
+        "( เฉพาะสั่งซื้อ ออนไลน์ เท่านั้น ) กระเป๋าผ้า CANVAS MSI LOGO"
+      ]
+    },
+    "code": "",
+    "code_discount": "",
+    "show_on_web": "",
+    "supplier": [],
+    "c_icon": null,
+    "icon_ai": null,
+    "icon_ict": null,
+    "icon_asus": null
+  },
+  "preOrder": false,
+  "preOrderDate": null,
+  "price": 13990,
+  "product360": true,
+  "productLocation": "75",
+  "productView": 6133,
+  "product_ict": null,
+  "product_ict_comment": null,
+  "product_warranty_2_year": null,
+  "product_warranty_3_year": null,
+  "product_windows": null,
+  "rating": 0,
+  "salePrice": 12990,
+  "stockQuantity": 2,
+  "title": "NOTEBOOK (โน้ตบุ๊ค) MSI MODERN 15 B7M-435TH (CLASSIC BLACK)",
+  "totalReviews": 0,
+  "updatedAt": {
+    "$date": "2025-02-06T09:58:25.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "685827dd46b7696e78ce8903"
+  },
+  "productCode": "82X700CVTA",
+  "byOrder": false,
+  "byOrderDate": null,
+  "cateId": 1468,
+  "cateName": "Ultrathin Notebooks",
+  "categoryId": 1820,
+  "clearAnce": false,
+  "compare": {
+    "cate_sub1": "24",
+    "cate_sub2": "1468",
+    "cate_sub3": "1820",
+    "compare_lv": 2
+  },
+  "createdAt": {
+    "$date": "2025-01-28T16:17:05.000Z"
+  },
+  "description": "• Intel Core i3-1315U\r\n• 8GB LPDDR5\r\n• 512GB PCIe 4/NVMe M.2 SSD\r\n• 15.6\" FHD (1920 x 1080) IPS 300nits Anti-glare\r\n• Intel UHD Graphics (Integrated)\r\n• Windows 11 Home",
+  "freeShipping": true,
+  "highlights_detail": "",
+  "id": 74001,
+  "images": {
+    "original": {
+      "width": "0",
+      "heigth": "0",
+      "url": [
+        "https://www.jib.co.th/img_master/product/original/20250204150202_74001_287_1.jpg"
+      ]
+    },
+    "icon": {
+      "width": "50px",
+      "heigth": "50px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/icon/20250204150202_74001_287_1.jpg"
+      ]
+    },
+    "small": {
+      "width": "150px",
+      "heigth": "150px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/small/20250204150202_74001_287_1.jpg"
+      ]
+    },
+    "medium": {
+      "width": "280px",
+      "heigth": "280px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/medium/20250204150202_74001_287_1.jpg"
+      ]
+    },
+    "large": {
+      "width": "550px",
+      "heigth": "550px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/big/20250204150202_74001_287_1.jpg"
+      ]
+    }
+  },
+  "logo": {
+    "freeItemOri": {
+      "url": [
+        "https://www.jib.co.th/img_master/images/promotion/original/20240827102346_1.jpg",
+        "https://www.jib.co.th/img_master/images/promotion/original/20241209190950_1.jpg"
+      ],
+      "title": [
+        "( เฉพาะสั่งซื้อ ออนไลน์ เท่านั้น )  GIFTBOX JIB SMILEY FOR NOTEBOOK",
+        "( เฉพาะสั่งซื้อ ออนไลน์ เท่านั้น ) BAG LENOVO 16-inch LAPTOP BACKPACK B210 BLACK (ECO)"
+      ]
+    },
+    "shipping": [
+      {
+        "url": "",
+        "title": "",
+        "key": "",
+        "locationStatus": ""
+      }
+    ],
+    "installment": {
+      "url": [],
+      "title": [],
+      "logo_search": null
+    },
+    "freeItem": {
+      "url": [
+        "https://www.jib.co.th/img_master/images/promotion/small/20240827102346_1.jpg",
+        "https://www.jib.co.th/img_master/images/promotion/small/20241209190950_1.jpg"
+      ],
+      "title": [
+        "( เฉพาะสั่งซื้อ ออนไลน์ เท่านั้น )  GIFTBOX JIB SMILEY FOR NOTEBOOK",
+        "( เฉพาะสั่งซื้อ ออนไลน์ เท่านั้น ) BAG LENOVO 16-inch LAPTOP BACKPACK B210 BLACK (ECO)"
+      ]
+    },
+    "code": "LNVJN500",
+    "code_discount": "500",
+    "show_on_web": "1",
+    "supplier": [],
+    "c_icon": null,
+    "icon_ai": null,
+    "icon_ict": null,
+    "icon_asus": null
+  },
+  "preOrder": false,
+  "preOrderDate": null,
+  "price": 12990,
+  "product360": true,
+  "productLocation": "75",
+  "productView": 4094,
+  "product_ict": null,
+  "product_ict_comment": null,
+  "product_warranty_2_year": null,
+  "product_warranty_3_year": null,
+  "product_windows": null,
+  "rating": 0,
+  "salePrice": 11990,
+  "stockQuantity": 6,
+  "title": "NOTEBOOK (โน้ตบุ๊ค) LENOVO IDEAPAD SLIM 3 15IRU8 82X700CVTA (ARCTIC GREY)",
+  "totalReviews": 0,
+  "updatedAt": {
+    "$date": "2025-02-04T16:06:01.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "685827e046b7696e78ce8933"
+  },
+  "productCode": "F13MG-633TH",
+  "byOrder": false,
+  "byOrderDate": null,
+  "cateId": 1468,
+  "cateName": "Ultrathin Notebooks",
+  "categoryId": 1822,
+  "clearAnce": false,
+  "compare": {
+    "cate_sub1": "24",
+    "cate_sub2": "1468",
+    "cate_sub3": "1822",
+    "compare_lv": 2
+  },
+  "createdAt": {
+    "$date": "2025-06-19T09:00:11.000Z"
+  },
+  "description": "Modern 15 F13M is a slim, portable laptop powered by the latest Intel® Core™ processor. With long battery life and full I/O ports, it’s perfect for productivity whether you’re at the office, on the move, or traveling.\r\n\r\n• CPU : Intel Core i3-1315U\r\n• RAM : 8GB DDR4\r\n• SSD : 512GB PCIe 4/NVMe M.2 SSD\r\n• Display : 15.6\" FHD (1920x1080) IPS 60Hz\r\n• Graphics : Intel UHD Graphics (Integrated)\r\n• Software : Windows 11 Home / Office Home & Student 2024",
+  "freeShipping": true,
+  "highlights_detail": "",
+  "id": 77735,
+  "images": {
+    "original": {
+      "width": "0",
+      "heigth": "0",
+      "url": [
+        "https://www.jib.co.th/img_master/product/original/2025061909003377735_1.png"
+      ]
+    },
+    "icon": {
+      "width": "50px",
+      "heigth": "50px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/icon/2025061909003377735_1.png"
+      ]
+    },
+    "small": {
+      "width": "150px",
+      "heigth": "150px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/small/2025061909003377735_1.png"
+      ]
+    },
+    "medium": {
+      "width": "280px",
+      "heigth": "280px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/medium/2025061909003377735_1.png"
+      ]
+    },
+    "large": {
+      "width": "550px",
+      "heigth": "550px",
+      "url": [
+        "https://www.jib.co.th/img_master/product/big/2025061909003377735_1.png"
+      ]
+    }
+  },
+  "logo": {
+    "freeItemOri": {
+      "url": [],
+      "title": []
+    },
+    "shipping": [
+      {
+        "url": "",
+        "title": "",
+        "key": "",
+        "locationStatus": ""
+      }
+    ],
+    "installment": {
+      "url": [
+        "https://www.jib.co.th/img_master/img/zero-percent-kbank.png?v=1001",
+        "https://www.jib.co.th/img_master/img/610517-logo-ktc2020-04-01.png?v=1003",
+        "https://www.jib.co.th/img_master/img/logo-ผ่อนสินค้า-06.png?v=1004",
+        "https://www.jib.co.th/img_master/img/kfc0-2020-03-24.png?v=1003"
+      ],
+      "title": [
+        "เจไอบี มอบเเคมเปญ เเบ่งชำระ 0% ผ่านบัตรเครดิตของธนาคารกสิกรไทย",
+        "เจไอบี มอบแคมเปญ แบ่งชำระ 0% ผ่านบัตรเครดิตของธนาคารกรุงไทย",
+        "เจไอบี มอบแคมเปญ แบ่งชำระ 0% ผ่านบัตรเครดิตของธนาคารกรุงศรีอยุธยา",
+        "เจไอบี มอบแคมเปญ แบ่งชำระ 0% ผ่านบัตรกรุงศรี เฟิร์สช้อยส์"
+      ],
+      "logo_search": [
+        "kbank",
+        "ktc",
+        "kcc",
+        "kfc"
+      ]
+    },
+    "freeItem": {
+      "url": [],
+      "title": []
+    },
+    "code": "",
+    "code_discount": "",
+    "show_on_web": "",
+    "supplier": [],
+    "c_icon": "",
+    "icon_ai": null,
+    "icon_ict": null,
+    "icon_asus": null
+  },
+  "preOrder": false,
+  "preOrderDate": null,
+  "price": 13290,
+  "product360": false,
+  "productLocation": "75",
+  "productView": 150,
+  "product_ict": null,
+  "product_ict_comment": null,
+  "product_warranty_2_year": null,
+  "product_warranty_3_year": null,
+  "product_windows": null,
+  "rating": 0,
+  "salePrice": 13290,
+  "stockQuantity": 5,
+  "title": "NOTEBOOK (โน้ตบุ๊ค) MSI MODERN15 F13MG-633TH - URBAN SILVER",
+  "totalReviews": 0,
+  "updatedAt": {
+    "$date": "2025-06-19T09:06:28.000Z"
+  }
+}]

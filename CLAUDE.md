@@ -4,23 +4,40 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Development Commands
 
-- **Development server**: `npm run dev` (starts on http://localhost:3000)
-- **Build**: `npm run build` 
-- **Production start**: `npm start`
-- **Lint**: `npm run lint`
+### Separated Architecture (Frontend + Backend)
+- **Start both services**: `./scripts/start-dev.sh` (recommended for development)
+- **Frontend only**: `npm run dev` (starts on http://localhost:3000)
+- **Backend only**: `cd backend && python start.py` (starts on http://localhost:8000)
+- **Build frontend**: `npm run build` 
+- **Lint frontend**: `npm run lint`
+- **Test backend**: `cd backend && python test_backend.py`
+
+### Legacy Full-Stack Commands
+- **Production start**: `npm start` (frontend only - requires backend running separately)
 
 ## Architecture Overview
 
-This is a comprehensive Next.js 14 AI-powered chatbot application for an IT equipment store. Built with TypeScript, MongoDB, and OpenAI GPT-4 integration featuring advanced entity extraction, flexible search, and intelligent product recommendations.
+This system has been converted from a full-stack Next.js application to a **separated frontend/backend architecture**:
+
+- **Frontend**: Next.js 14 with TypeScript, Tailwind CSS, React components
+- **Backend**: Python FastAPI with MongoDB, OpenAI GPT-4 integration
+- **Communication**: REST API between frontend and backend
+
+The backend provides AI-powered chatbot functionality with advanced entity extraction, flexible search, and intelligent product recommendations.
 
 ### Core Components
 
-- **ITStoreChatbot Class**: `/lib/chatbot.ts` - Main chatbot engine with entity extraction, flexible search, fallback systems, and analytics
-- **AI Helpers**: `/lib/ai-helpers.ts` - LLM-based entity extraction, text normalization, category mapping, and query building utilities
-- **Chat API**: `/app/api/chat/route.ts` - Main endpoint using ITStoreChatbot for processing user queries
-- **Additional APIs**: `/app/api/recommendations/`, `/app/api/trending/`, `/app/api/insights/` - Extended functionality endpoints
-- **Database**: `/lib/mongodb.ts` - MongoDB connection to "dashboard-ai-data" database
+#### Backend (Python FastAPI)
+- **ITStoreChatbot Class**: `/backend/app/services/chatbot.py` - Main chatbot engine with entity extraction, flexible search, fallback systems, and analytics  
+- **AI Helpers**: `/backend/app/services/ai_helpers.py` - LLM-based entity extraction, text normalization, category mapping, and query building utilities
+- **Chat API**: `/backend/app/routers/chat.py` - Main endpoint using ITStoreChatbot for processing user queries
+- **Additional APIs**: `/backend/app/routers/recommendations.py`, `/backend/app/routers/trending.py`, `/backend/app/routers/insights.py` - Extended functionality endpoints
+- **Database**: `/backend/app/database.py` - Async MongoDB connection to "dashboard-ai-data" database
+
+#### Frontend (Next.js)
+- **API Client**: `/lib/api-client.ts` - Frontend API client for communicating with Python backend
 - **ProductCard**: Enhanced component with image carousel, discount display, and new schema support
+- **Chat Interface**: `/app/page.tsx` - Main chat interface that calls backend APIs
 
 ### Key Architecture Patterns
 
@@ -60,12 +77,17 @@ The chatbot extracts structured data from user inputs:
 4. **Text Fallback**: Simple regex search on title/description
 5. **Ranking**: Sort by popularity (productView), rating, and social proof
 
-### API Endpoints
+### API Endpoints (Backend)
+
+**Base URL**: `http://localhost:8000/api` (development)
 
 - `POST /api/chat` - Main chat processing with entity extraction and product search
-- `POST /api/recommendations` - Get product recommendations based on current selection
-- `GET /api/trending` - Fetch trending/popular products
+- `POST /api/recommendations` - Get product recommendations based on current selection  
+- `GET /api/trending?limit=N` - Fetch trending/popular products
 - `POST /api/insights` - Get search analytics (price ranges, categories, brands)
+- `GET /health` - Backend health check endpoint
+
+**Frontend Integration**: All API calls are handled through `/lib/api-client.ts`
 
 ### Thai Language Support
 
@@ -76,7 +98,18 @@ The chatbot extracts structured data from user inputs:
 
 ### Environment Setup
 
-Requires `MONGODB_URI` in `.env.local` for database connection to MongoDB Atlas or local instance.
+#### Backend Environment (`.env` in `/backend/`)
+```
+MONGODB_URI=mongodb://localhost:27017/dashboard-ai-data
+OPENAI_API_KEY=your_openai_api_key_here
+```
+
+#### Frontend Environment (`.env.local` in root)
+```
+NEXT_PUBLIC_API_URL=http://localhost:8000/api
+```
+
+**Note**: Backend must be running before starting the frontend for proper API communication.
 
 ### Testing User Input Examples
 

@@ -2,25 +2,38 @@ export interface Product {
   _id: string
   title: string
   description: string
-  keyword: string[]
+  cateName: string  // หมวดหมู่สินค้า (แทน navigation.categoryMessage1)
   price: number
   salePrice: number
   stockQuantity: number
-  navigation: {
-    categoryId: string
-    categoryMessage1: string
-    categoryMessage2: string
-    categoryMessage3: string
-  }
-  productActive: boolean
   rating: number
   totalReviews: number
   productView: number
-  images: {
-    medium: {
+  images?: {
+    original?: {
+      url: string[]
+    }
+    medium?: {
+      url: string[]
+    }
+    large?: {
+      url: string[]
+    }
+    small?: {
+      url: string[]
+    }
+    icon?: {
       url: string[]
     }
   }
+  freeShipping?: boolean  // ฟิลด์ใหม่
+  product_warranty_2_year?: string  // ฟิลด์ใหม่
+  product_warranty_3_year?: string  // ฟิลด์ใหม่
+  
+  // ฟิลด์เสริม
+  categoryId?: number
+  cateId?: number
+  productCode?: string
 }
 
 export interface ChatMessage {

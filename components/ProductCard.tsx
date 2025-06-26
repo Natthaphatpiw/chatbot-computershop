@@ -3,7 +3,7 @@
 import React, { useState } from "react"
 import Image from "next/image"
 import type { Product } from "@/types"
-import { ShoppingCart, Heart, Star, Cpu, HardDrive, Monitor, Gamepad, Eye, ChevronLeft, ChevronRight } from "lucide-react"
+import { ShoppingCart, Heart, Star, Cpu, HardDrive, Monitor, Gamepad, Eye, ChevronLeft, ChevronRight, Truck, Shield } from "lucide-react"
 import { motion } from "framer-motion"
 import { ProductModal } from "./ProductModal"
 
@@ -16,7 +16,7 @@ export function ProductCard({ product }: ProductCardProps) {
   const [isWishlisted, setIsWishlisted] = useState(false)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   
-  const images = product.images?.medium?.url || []
+  const images = product.images?.original?.url || []
   const discount = product.price - product.salePrice
   const discountPercent = discount > 0 ? Math.round((discount / product.price) * 100) : 0
   const hasDiscount = discount > 0
@@ -38,14 +38,14 @@ export function ProductCard({ product }: ProductCardProps) {
 
   // Helper function to get appropriate icon based on category
   const getCategoryIcon = () => {
-    const categoryName = product.navigation?.categoryMessage1 || ""
-    if (categoryName.includes("โน้ตบุ๊ก") || categoryName.includes("laptop")) {
+    const categoryName = product.cateName || ""
+    if (categoryName.includes("Notebook") || categoryName.includes("Gaming Notebook")) {
       return <Cpu size={12} />
-    } else if (categoryName.includes("คอมพิวเตอร์") || categoryName.includes("desktop")) {
+    } else if (categoryName.includes("Desktop") || categoryName.includes("All in One")) {
       return <Monitor size={12} />
-    } else if (categoryName.includes("เกม") || categoryName.includes("gaming")) {
+    } else if (categoryName.includes("Gaming") || categoryName.includes("Gaming")) {
       return <Gamepad size={12} />
-    } else if (categoryName.includes("จัดเก็บ") || categoryName.includes("storage")) {
+    } else if (categoryName.includes("Hard Drive") || categoryName.includes("Memory Card")) {
       return <HardDrive size={12} />
     } else {
       return <Cpu size={12} />
@@ -53,7 +53,7 @@ export function ProductCard({ product }: ProductCardProps) {
   }
 
   const getCategoryDisplay = () => {
-    return product.navigation?.categoryMessage2 || product.navigation?.categoryMessage1 || "สินค้าไอที"
+    return product.cateName || "สินค้าไอที"
   }
   
   return (
@@ -190,6 +190,28 @@ export function ProductCard({ product }: ProductCardProps) {
               <Star size={12} />
               <span>รีวิว: {product.totalReviews}</span>
             </div>
+          </div>
+
+          {/* New features: Free Shipping and Warranty */}
+          <div className="flex items-center gap-2 mb-2 flex-wrap">
+            {product.freeShipping && (
+              <div className="flex items-center gap-1 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 px-2 py-1 rounded-full text-xs">
+                <Truck size={10} />
+                <span>ส่งฟรี</span>
+              </div>
+            )}
+            {product.product_warranty_2_year && (
+              <div className="flex items-center gap-1 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-2 py-1 rounded-full text-xs">
+                <Shield size={10} />
+                <span>รับประกัน 2 ปี</span>
+              </div>
+            )}
+            {product.product_warranty_3_year && (
+              <div className="flex items-center gap-1 bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 px-2 py-1 rounded-full text-xs">
+                <Shield size={10} />
+                <span>รับประกัน 3 ปี</span>
+              </div>
+            )}
           </div>
 
           <button

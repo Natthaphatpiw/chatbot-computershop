@@ -7,6 +7,7 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import type { ChatMessage } from "@/types"
 import { MessageCircle, ShoppingBag, Search, Menu, Bell, User as UserIcon, ChevronRight, Sparkles, X, ArrowUp, ArrowDown, Monitor } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+import { apiClient } from "@/lib/api-client"
 
 // Suggested questions for the user
 const suggestions = ["แนะนำเกมมิ่งเกียร์ราคาถูก", "แนะนำโน้ตบุ๊คสำหรับเล่นเกม", "แนะนำอุปกรณ์เสริมที่เกมเมอร์ต้องมี", "แนะนำอุปกรณ์จัดเก็บข้อมูล"];
@@ -97,19 +98,7 @@ export default function ChatPage() {
     setIsLoading(true)
 
     try {
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ message: content }),
-      })
-
-      if (!response.ok) {
-        throw new Error("Failed to get response")
-      }
-
-      const data = await response.json()
+      const data = await apiClient.chat({ message: content })
 
       const assistantMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),

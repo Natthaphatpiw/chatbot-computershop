@@ -18,20 +18,20 @@ async function viewNavigationAttributes() {
     console.log("Connected to MongoDB");
 
     const db = client.db("dashboard-ai-data");
-    const collection = db.collection("product_details");
+    const collection = db.collection("products");
 
     console.log("\nFetching distinct navigation attributes...");
 
-    const [categoryMessage1Values, categoryMessage2Values, categoryMessage3Values] = await Promise.all([
-      collection.distinct("navigation.categoryMessage1"),
-      collection.distinct("navigation.categoryMessage2"),
-      collection.distinct("navigation.categoryMessage3"),
+    const [categoryMessage1Values] = await Promise.all([
+      collection.distinct("cateName")
+      // collection.distinct("navigation.categoryMessage2"),
+      // collection.distinct("navigation.categoryMessage3"),
     ]);
 
     const navigationAttributes = {
       categoryMessage1: categoryMessage1Values,
-      categoryMessage2: categoryMessage2Values,
-      categoryMessage3: categoryMessage3Values,
+      // categoryMessage2: categoryMessage2Values,
+      // categoryMessage3: categoryMessage3Values,
     };
 
     await fs.writeFile(outputFilePath, JSON.stringify(navigationAttributes, null, 2));

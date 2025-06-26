@@ -1,0 +1,497 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "_id",
+    "byOrder",
+    "byOrderDate",
+    "categoryId",
+    "cateId",
+    "cateName",
+    "clearAnce",
+    "compare",
+    "createdAt",
+    "description",
+    "freeShipping",
+    "highlights_detail",
+    "id",
+    "images",
+    "logo",
+    "preOrder",
+    "preOrderDate",
+    "price",
+    "product360",
+    "product_ict",
+    "product_ict_comment",
+    "product_warranty_2_year",
+    "product_warranty_3_year",
+    "product_windows",
+    "productCode",
+    "productLocation",
+    "productView",
+    "rating",
+    "salePrice",
+    "stockQuantity",
+    "title",
+    "totalReviews",
+    "updatedAt"
+  ],
+  "properties": {
+    "_id": {
+      "$ref": "#/$defs/ObjectId"
+    },
+    "byOrder": {
+      "type": "boolean"
+    },
+    "byOrderDate": {
+      "type": "null"
+    },
+    "categoryId": {
+      "type": "integer"
+    },
+    "cateId": {
+      "type": "integer"
+    },
+    "cateName": {
+      "type": "string"
+    },
+    "clearAnce": {
+      "type": "boolean"
+    },
+    "compare": {
+      "type": "object",
+      "required": [
+        "cate_sub1",
+        "cate_sub2",
+        "cate_sub3",
+        "compare_lv"
+      ],
+      "properties": {
+        "cate_sub1": {
+          "type": "string"
+        },
+        "cate_sub2": {
+          "type": "string"
+        },
+        "cate_sub3": {
+          "type": "string"
+        },
+        "compare_lv": {
+          "type": "integer"
+        }
+      }
+    },
+    "createdAt": {
+      "$ref": "#/$defs/Date"
+    },
+    "description": {
+      "type": "string"
+    },
+    "freeShipping": {
+      "type": "boolean"
+    },
+    "highlights_detail": {
+      "type": "string"
+    },
+    "id": {
+      "type": "integer"
+    },
+    "images": {
+      "type": "object",
+      "required": [
+        "icon",
+        "large",
+        "medium",
+        "original",
+        "small"
+      ],
+      "properties": {
+        "icon": {
+          "type": "object",
+          "required": [
+            "heigth",
+            "url",
+            "width"
+          ],
+          "properties": {
+            "heigth": {
+              "type": "string"
+            },
+            "url": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "width": {
+              "type": "string"
+            }
+          }
+        },
+        "large": {
+          "type": "object",
+          "required": [
+            "heigth",
+            "url",
+            "width"
+          ],
+          "properties": {
+            "heigth": {
+              "type": "string"
+            },
+            "url": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "width": {
+              "type": "string"
+            }
+          }
+        },
+        "medium": {
+          "type": "object",
+          "required": [
+            "heigth",
+            "url",
+            "width"
+          ],
+          "properties": {
+            "heigth": {
+              "type": "string"
+            },
+            "url": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "width": {
+              "type": "string"
+            }
+          }
+        },
+        "original": {
+          "type": "object",
+          "required": [
+            "heigth",
+            "url",
+            "width"
+          ],
+          "properties": {
+            "heigth": {
+              "type": "string"
+            },
+            "url": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "width": {
+              "type": "string"
+            }
+          }
+        },
+        "small": {
+          "type": "object",
+          "required": [
+            "heigth",
+            "url",
+            "width"
+          ],
+          "properties": {
+            "heigth": {
+              "type": "string"
+            },
+            "url": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "width": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "logo": {
+      "type": "object",
+      "required": [
+        "c_icon",
+        "code",
+        "code_discount",
+        "freeItem",
+        "freeItemOri",
+        "icon_ai",
+        "icon_asus",
+        "icon_ict",
+        "installment",
+        "shipping",
+        "show_on_web",
+        "supplier"
+      ],
+      "properties": {
+        "c_icon": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "code": {
+          "type": "string"
+        },
+        "code_discount": {
+          "type": "string"
+        },
+        "freeItem": {
+          "type": "object",
+          "required": [
+            "title",
+            "url"
+          ],
+          "properties": {
+            "title": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "url": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "freeItemOri": {
+          "type": "object",
+          "required": [
+            "title",
+            "url"
+          ],
+          "properties": {
+            "title": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "url": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "icon_ai": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "icon_asus": {
+          "type": "null"
+        },
+        "icon_ict": {
+          "type": "null"
+        },
+        "installment": {
+          "type": "object",
+          "required": [
+            "logo_search",
+            "title",
+            "url"
+          ],
+          "properties": {
+            "logo_search": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              ]
+            },
+            "title": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "url": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "shipping": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "key",
+              "locationStatus",
+              "title",
+              "url"
+            ],
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "locationStatus": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "show_on_web": {
+          "type": "string"
+        },
+        "supplier": {
+          "type": "array",
+          "items": {
+            "type": []
+          }
+        }
+      }
+    },
+    "preOrder": {
+      "type": "boolean"
+    },
+    "preOrderDate": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "price": {
+      "$ref": "#/$defs/Double"
+    },
+    "product360": {
+      "type": "boolean"
+    },
+    "product_ict": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "product_ict_comment": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "product_warranty_2_year": {
+      "type": "null"
+    },
+    "product_warranty_3_year": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "product_windows": {
+      "type": "null"
+    },
+    "productCode": {
+      "type": "string"
+    },
+    "productLocation": {
+      "type": "string"
+    },
+    "productView": {
+      "type": "integer"
+    },
+    "rating": {
+      "$ref": "#/$defs/Double"
+    },
+    "salePrice": {
+      "$ref": "#/$defs/Double"
+    },
+    "stockQuantity": {
+      "type": "integer"
+    },
+    "title": {
+      "type": "string"
+    },
+    "totalReviews": {
+      "type": "integer"
+    },
+    "updatedAt": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Date"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "$defs": {
+    "ObjectId": {
+      "type": "object",
+      "properties": {
+        "$oid": {
+          "type": "string",
+          "pattern": "^[0-9a-fA-F]{24}$"
+        }
+      },
+      "required": [
+        "$oid"
+      ],
+      "additionalProperties": false
+    },
+    "Double": {
+      "oneOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "$numberDouble": {
+              "enum": [
+                "Infinity",
+                "-Infinity",
+                "NaN"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "Date": {
+      "type": "object",
+      "properties": {
+        "$date": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "$date"
+      ],
+      "additionalProperties": false
+    }
+  }
+}
