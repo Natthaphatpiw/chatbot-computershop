@@ -12,6 +12,7 @@ export interface ChatRequest {
 
 export interface ChatResponse {
   message: string
+  response?: string  // Backend ส่ง field นี้มา
   products: any[]
   reasoning?: string
   entities?: any
@@ -66,10 +67,22 @@ class ApiClient {
   }
 
   async chat(request: ChatRequest): Promise<ChatResponse> {
-    return this.makeRequest<ChatResponse>('/chat', {
+    const rawResponse = await this.makeRequest<any>('/chat', {
       method: 'POST',
       body: JSON.stringify(request),
     })
+    
+    // แปลง backend response format เป็น frontend format
+    return {
+      message: rawResponse.response || rawResponse.message || "ไม่สามารถประมวลผลได้",
+      response: rawResponse.response,
+      products: rawResponse.products || [],
+      reasoning: rawResponse.reasoning,
+      entities: rawResponse.entities,
+      queryReasoning: rawResponse.queryReasoning,
+      mongoQuery: rawResponse.mongoQuery,
+      success: true
+    }
   }
 
   async getRecommendations(request: RecommendationRequest): Promise<any[]> {
