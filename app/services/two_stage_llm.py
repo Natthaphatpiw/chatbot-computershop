@@ -112,7 +112,7 @@ def enhanced_contextual_phrase_segmentation(text: str) -> Dict[str, Any]:
             "priority": 10
         },
         {
-            "pattern": r'(โน้ตบุ๊ก|คอมพิวเตอร์|คอมตั้งโต๊ะ|การ์ดจอ|เมาส์|คีย์บอร์ด|หูฟัง|จอมอนิเตอร์|ซีพียู|แรม|เครื่องพิมพ์)(?!\s*[เล่นทำใช้])',
+            "pattern": r'(โน้?[ตด]บุ๊?[กค]|คอมพิวเตอร์|คอมตั้งโต๊ะ|การ์ดจอ|เมาส์|คีย์บอร์ด|หูฟัง|จอมอนิเตอร์|ซีพียู|แรม|เครื่องพิมพ์)(?!\s*[เล่นทำใช้])',
             "type": "CATEGORY_FILTER",
             "stage": "stage1_filter", 
             "priority": 9
@@ -149,13 +149,7 @@ def enhanced_contextual_phrase_segmentation(text: str) -> Dict[str, Any]:
             "pattern": r'ทำงานกราฟิก',
             "type": "USAGE_GRAPHICS",
             "stage": "stage2_content",
-            "priority": 8
-        },
-        {
-            "pattern": r'ทำงาน\s*กราฟิก',
-            "type": "USAGE_GRAPHICS",
-            "stage": "stage2_content",
-            "priority": 8
+            "priority": 9  # เพิ่ม priority เพื่อจับก่อน pattern อื่น
         },
         {
             "pattern": r'เล่นเกม\s*(?!ได้ไหม)[\w\s]*',
@@ -190,10 +184,10 @@ def enhanced_contextual_phrase_segmentation(text: str) -> Dict[str, Any]:
             "priority": 8
         },
         {
-            "pattern": r'(?:\w+)?(?:ดีไหม|เป็นอย่างไร|ได้ไหม|ใช้ได้ไหม)',
+            "pattern": r'ดีไหม|เป็นอย่างไร|ใช้ได้ไหม',
             "type": "GENERAL_QUESTION",
             "stage": "stage3_questions",
-            "priority": 7
+            "priority": 8  # เพิ่ม priority ให้สูงกว่า budget pattern
         },
         {
             "pattern": r'(?:รุ่นไหนดี|มีอะไรบ้าง|มีไหม)',
@@ -218,13 +212,17 @@ def enhanced_contextual_phrase_segmentation(text: str) -> Dict[str, Any]:
     # Sort patterns by priority (highest first)
     sorted_patterns = sorted(phrase_patterns, key=lambda x: x['priority'], reverse=True)
     
+    # Extract phrases using prioritized patterns - เก็บ original text สำหรับ matching แต่ใช้ normalized text สำหรับ pattern
+    original_text = text.lower()
+    
     # Extract phrases using prioritized patterns
     for pattern_info in sorted_patterns:
-        matches = re.finditer(pattern_info['pattern'], processed_text, re.IGNORECASE)
+        # ใช้ original text สำหรับ matching เพื่อให้จับ "ทำงานกราฟิก" ได้
+        matches = re.finditer(pattern_info['pattern'], original_text, re.IGNORECASE)
         for match in matches:
             phrase = match.group().strip()
             if phrase and len(phrase) > 1:
-                # Check for overlaps with higher priority phrases - more lenient for smaller phrases
+                # Check for overlaps with higher priority phrases
                 overlap = False
                 for existing_phrase, _, _ in found_phrases:
                     # More strict overlap detection
@@ -239,45 +237,25 @@ def enhanced_contextual_phrase_segmentation(text: str) -> Dict[str, Any]:
                 
                 if not overlap:
                     found_phrases.append((phrase, pattern_info['type'], pattern_info['stage']))
-                    # Only replace exact matches to avoid breaking other patterns
-                    processed_text = re.sub(re.escape(phrase.lower()), ' ' * len(phrase), processed_text, count=1)
+                    # Mark this position as used in original text
+                    original_text = re.sub(re.escape(phrase.lower()), ' ' * len(phrase), original_text, count=1)
     
     # Initial processing of found phrases (will be overwritten by enhanced fallback)
     initial_phrases = found_phrases.copy()
     
-    # Enhanced fallback: try to find unmatched important words
-    remaining_text = re.sub(r'\s+', ' ', processed_text).strip()
-    important_words = re.findall(r'\b\w{3,}\b', remaining_text)
+    # Limited fallback: เฉพาะคำสำคัญที่ไม่ได้ถูกจับ
+    remaining_text = re.sub(r'\s+', ' ', original_text).strip()
+    important_words = re.findall(r'\b\w{4,}\b', remaining_text)  # เพิ่มความยาวขั้นต่ำ
     
-    # Look for important unmatched terms
-    category_keywords = ['โน้ตบุ๊ก', 'คอม', 'การ์ดจอ', 'เมาส์', 'คีย์บอร์ด', 'หูฟัง']
-    usage_keywords = ['ทำงาน', 'กราฟิก', 'เล่นเกม', 'ออฟฟิศ']
-    budget_keywords = ['ราคา', 'งบ', 'บาท', 'เกิน']
-    question_keywords = ['ไหม', 'ดี', 'แนะนำ', 'รุ่น']
+    # Look for important unmatched terms - ลดจำนวน fallback
+    existing_phrases_lower = [p[0].lower() for p in found_phrases]
     
     for word in important_words:
-        if len(word) > 2 and word not in [p[0].lower() for p in found_phrases]:
-            word_type = None
-            word_stage = None
-            
-            if any(cat in word for cat in category_keywords):
-                word_type = "CATEGORY_FALLBACK"
-                word_stage = "stage1_filter"
-            elif any(usage in word for usage in usage_keywords):
-                word_type = "USAGE_FALLBACK"
-                word_stage = "stage2_content"
-            elif any(budget in word for budget in budget_keywords):
-                word_type = "BUDGET_FALLBACK"
-                word_stage = "stage1_filter"
-            elif any(question in word for question in question_keywords):
-                word_type = "QUESTION_FALLBACK"
-                word_stage = "stage3_questions"
-            else:
-                word_type = "GENERAL_FALLBACK"
-                word_stage = "stage2_content"
-            
-            if word_type:
-                found_phrases.append((word, word_type, word_stage))
+        if len(word) > 3 and word.lower() not in existing_phrases_lower:
+            # เฉพาะคำที่สำคัญจริงๆ เท่านั้น
+            if (word in ['ryzen', 'intel', 'rtx', 'gtx', 'asus', 'hp', 'dell', 'msi'] or
+                re.match(r'\d{4,}', word)):  # ตัวเลข 4 หลักขึ้นไป (ราคา/รุ่น)
+                found_phrases.append((word, "IMPORTANT_FALLBACK", "stage2_content"))
     
     # Re-process found phrases including fallbacks
     for phrase, phrase_type, stage in found_phrases:
@@ -372,7 +350,9 @@ def load_database_schema():
         for path in keyword_paths:
             try:
                 with open(path, 'r', encoding='utf-8') as f:
-                    keyword_mapping = json.load(f)
+                    keyword_data = json.load(f)
+                    # ใช้ categoryMapping structure ตาม user requirement
+                    keyword_mapping = keyword_data.get("categoryMapping", keyword_data)
                     print(f"✅ Loaded keyword mapping from {path}")
                     break
             except FileNotFoundError:
@@ -738,18 +718,20 @@ def extract_basic_entities(input_text: str, categories_data: List[str]) -> Dict[
         
         # First try keyword mapping (more accurate)
         category_found = False
-        for cateName, keywords in keyword_mapping.items():
-            if cateName in categories_data:  # Only consider available categories
-                for keyword in keywords:
-                    if keyword.lower() in phrase_lower:
+        # keyword_mapping structure: {"keyword": ["cateName1", "cateName2"]}
+        for keyword, category_list in keyword_mapping.items():
+            if keyword.lower() in phrase_lower:
+                # category_list เป็น array ของ cateName
+                for cateName in category_list:
+                    if cateName in categories_data:  # Only consider available categories
                         found_categories.append(cateName)
-                        processed_terms["used"].append(phrase)
+                        if phrase not in processed_terms["used"]:
+                            processed_terms["used"].append(phrase)
                         if phrase in processed_terms["remaining"]:
                             processed_terms["remaining"].remove(phrase)
                         category_found = True
-                        break
-            if category_found:
-                break
+                if category_found:
+                    break
         
         # If not found in keyword mapping, try direct category matching
         if not category_found:

@@ -20,9 +20,9 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",  # Local development
-        "https://it-store-chatbot.vercel.app",  # Replace with your actual frontend domain
+        "https://your-frontend-domain.com",  # Replace with your actual frontend domain
         "*"  # Temporary: allow all origins for testing
-    ], # Next.js frontend
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
