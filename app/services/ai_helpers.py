@@ -147,7 +147,7 @@ INPUT: "{normalized_input}"
             client = get_openai_client()
             
         response = client.chat.completions.create(
-            model="gpt-4o-mini",
+            model="gpt-4.1-mini",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.1,
         )
@@ -297,7 +297,7 @@ User Entities:
             client = get_openai_client()
             
         response = client.chat.completions.create(
-            model="gpt-4o-mini",
+            model="gpt-4.1-mini",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.7,
         )
@@ -331,7 +331,7 @@ Entities: {json.dumps(entities, ensure_ascii=False, indent=2)}
             client = get_openai_client()
             
         response = client.chat.completions.create(
-            model="gpt-4o-mini",
+            model="gpt-4.1-mini",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.6,
         )

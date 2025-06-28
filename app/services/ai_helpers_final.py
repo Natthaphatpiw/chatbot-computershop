@@ -227,7 +227,7 @@ Category Only (no budget):
             client = get_openai_client()
             
         response = client.chat.completions.create(
-            model="gpt-4o-mini",
+            model="gpt-4.1-mini",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.1,
         )
@@ -459,7 +459,7 @@ Stock: {p.stockQuantity}
             client = get_openai_client()
             
         response = client.chat.completions.create(
-            model="gpt-4o-mini",
+            model="gpt-4.1-mini",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.2,
         )
@@ -566,7 +566,7 @@ User Context:
             client = get_openai_client()
             
         response = client.chat.completions.create(
-            model="gpt-4o-mini",
+            model="gpt-4.1-mini",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.7,
         )

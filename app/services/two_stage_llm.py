@@ -117,6 +117,31 @@ def enhanced_contextual_phrase_segmentation(text: str) -> Dict[str, Any]:
             "stage": "stage1_filter", 
             "priority": 9
         },
+        # PROMOTIONAL QUERIES - NEW HIGH PRIORITY
+        {
+            "pattern": r'(?:ตอนนี้มี|มีอะไร|มีไหม).*?ส่วนลด',
+            "type": "DISCOUNT_INQUIRY",
+            "stage": "stage1_filter",
+            "priority": 10
+        },
+        {
+            "pattern": r'ส่วนลด.*?(?:อะไรบ้าง|ไหน|มีอะไร)',
+            "type": "DISCOUNT_INQUIRY", 
+            "stage": "stage1_filter",
+            "priority": 10
+        },
+        {
+            "pattern": r'(?:จัดส่งฟรี|ส่งฟรี).*?(?:ไหม|หรือเปล่า|มั้ย)',
+            "type": "FREE_SHIPPING_INQUIRY",
+            "stage": "stage1_filter",
+            "priority": 10
+        },
+        {
+            "pattern": r'(?:รุ่นไหน|อะไร).*?(?:มีประกัน|ประกัน).*?(?:บ้าง|ไหม)',
+            "type": "WARRANTY_INQUIRY",
+            "stage": "stage1_filter",
+            "priority": 10
+        },
         {
             "pattern": r'(?:งบ|ไม่เกิน|ประมาณ|ราคา|budget)[\s\w]*?(\d{1,3}(?:,\d{3})*|\d+)(?:\s*บาท|$)',
             "type": "BUDGET_FILTER",
@@ -526,6 +551,20 @@ async def stage1_context_analysis_and_query_builder(user_input: str) -> Dict[str
 - ตัวอย่าง: "อยากได้คอม", "โน้ตบุ๊ก", "งบ 20000"
 - วิเคราะห์: หมวดหมู่ (cateName) และราคา (salePrice)
 
+**PROMOTIONAL QUERIES HANDLING:**
+- **"ตอนนี้มีส่วนลดอะไรบ้าง"** → สร้าง query เฉพาะสินค้าที่มีส่วนลด:
+  ```json
+  {"$expr": {"$gt": ["$price", "$salePrice"]}}
+  ```
+- **"จัดส่งฟรีไหม"** → สร้าง query กรองสินค้าส่งฟรี:
+  ```json
+  {"freeShipping": true}
+  ```  
+- **"การ์ดจอ RTX รุ่นไหนมีประกันบ้าง"** → แยกเป็น:
+  - cateName: "Graphics Cards" (การ์ดจอ → stage1_filter)
+  - warranty filter: {"$or": [{"product_warranty_2_year": true}, {"product_warranty_3_year": true}]}
+  - "RTX" → ส่งไป stage2_content สำหรับการ match ใน title
+
 **Phase 2: วิเคราะห์วลี stage1_inference (ต้องอนุมานจากบริบท)**
 - วลีที่เป็นชื่อผลิตภัณฑ์เฉพาะ แต่ต้องอนุมานหมวดหมู่
 - ตัวอย่าง: "Ryzen 5 5600G" → อนุมาน CPU/Desktop PC/Notebooks
@@ -536,12 +575,16 @@ async def stage1_context_analysis_and_query_builder(user_input: str) -> Dict[str
 - stage3_questions: วลีคำถาม/คำแนะนำ
 
 **RULES:**
-- ใช้เฉพาะ: stockQuantity, cateName, salePrice
-- ห้ามใช้: title, description, $regex, $or สำหรับ content
+- ใช้เฉพาะ: stockQuantity, cateName, salePrice, freeShipping, product_warranty_2_year, product_warranty_3_year
+- ห้ามใช้: title, description, $regex, $or สำหรับ content (ยกเว้น warranty queries)
 - ใช้ KEYWORD TO CATEGORY MAPPING เพื่อจับคู่คำไทย/อังกฤษกับ cateName
 - **MONGODB SYNTAX**: 
   - Single: "cateName": "Notebooks"
   - Multiple: "cateName": {"$in": ["Desktop PC", "Notebooks"]}
+  - **PROMOTIONAL SYNTAX**:
+    - Discount: {"$expr": {"$gt": ["$price", "$salePrice"]}}
+    - Free shipping: {"freeShipping": true}
+    - Warranty: {"$or": [{"product_warranty_2_year": true}, {"product_warranty_3_year": true}]}
 
 **EXAMPLES:**
 
@@ -561,6 +604,17 @@ Analysis:
 - stage1_inference: ["Ryzen 5 5600G"] → อนุมาน cateName: {"$in": ["CPU", "Desktop PC", "Notebooks"]}
 - stage2_content: ["Ryzen 5 5600G"] → ส่งไป Stage 2 ด้วย (ชื่อเฉพาะ)
 - stage3_questions: ["เล่นเกมได้ไหม"] → ส่งไป Stage 3
+
+Input: "ตอนนี้มีส่วนลดอะไรบ้าง"
+Analysis:
+- stage1_filter: ["ตอนนี้มีส่วนลด"] → {"$expr": {"$gt": ["$price", "$salePrice"]}}
+- stage3_questions: ["อะไรบ้าง"] → ส่งไป Stage 3
+
+Input: "การ์ดจอ RTX รุ่นไหนมีประกันบ้าง" 
+Analysis:
+- stage1_filter: ["การ์ดจอ", "รุ่นไหนมีประกัน"] → cateName: "Graphics Cards", warranty filter
+- stage2_content: ["RTX"] → ส่งไป Stage 2 (ชื่อใน title)
+- stage3_questions: ["รุ่นไหนมีประกันบ้าง"] → ส่งไป Stage 3
 
 ตอบใน JSON:
 {
@@ -589,7 +643,7 @@ Analysis:
             client = get_openai_client()
             
         response = client.chat.completions.create(
-            model="gpt-4o-mini",
+            model="gpt-4.1-mini",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.1,
         )
@@ -636,8 +690,12 @@ def validate_stage1_query(query: Dict[str, Any], actual_fields: List[str]) -> Di
     """Validate Stage 1 query - only allow basic fields"""
     validated_query = {"stockQuantity": {"$gt": 0}}
     
-    # Only allow these fields in Stage 1
-    allowed_fields = ['stockQuantity', 'cateName', 'salePrice', 'cateId', 'categoryId']
+    # Only allow these fields in Stage 1 (added promotional fields)
+    allowed_fields = [
+        'stockQuantity', 'cateName', 'salePrice', 'cateId', 'categoryId',
+        'freeShipping', 'product_warranty_2_year', 'product_warranty_3_year',
+        '$expr', '$or'  # Allow MongoDB expressions for promotional queries
+    ]
     
     for key, value in query.items():
         if key in allowed_fields:
@@ -789,6 +847,34 @@ def extract_basic_entities(input_text: str, categories_data: List[str]) -> Dict[
                         processed_terms["remaining"].remove(phrase)
                     break
     
+    # Extract promotional features (NEW)
+    for phrase in processed_terms["remaining"].copy():
+        phrase_lower = phrase.lower()
+        
+        # Check for discount inquiries
+        if re.search(r'(?:ตอนนี้มี|มีอะไร|มีไหม).*?ส่วนลด|ส่วนลด.*?(?:อะไรบ้าง|ไหน|มีอะไร)', phrase_lower):
+            processed_terms["discount_inquiry"] = True
+            if phrase not in processed_terms["used"]:
+                processed_terms["used"].append(phrase)
+            if phrase in processed_terms["remaining"]:
+                processed_terms["remaining"].remove(phrase)
+        
+        # Check for free shipping inquiries
+        elif re.search(r'(?:จัดส่งฟรี|ส่งฟรี).*?(?:ไหม|หรือเปล่า|มั้ย)', phrase_lower):
+            processed_terms["free_shipping_inquiry"] = True
+            if phrase not in processed_terms["used"]:
+                processed_terms["used"].append(phrase)
+            if phrase in processed_terms["remaining"]:
+                processed_terms["remaining"].remove(phrase)
+        
+        # Check for warranty inquiries
+        elif re.search(r'(?:รุ่นไหน|อะไร).*?(?:มีประกัน|ประกัน).*?(?:บ้าง|ไหม)', phrase_lower):
+            processed_terms["warranty_inquiry"] = True
+            if phrase not in processed_terms["used"]:
+                processed_terms["used"].append(phrase)
+            if phrase in processed_terms["remaining"]:
+                processed_terms["remaining"].remove(phrase)
+    
     return processed_terms
 
 def is_non_filter_phrase(phrase: str) -> bool:
@@ -807,6 +893,20 @@ def is_non_filter_phrase(phrase: str) -> bool:
         r'เป็นอย่างไร'      # เป็นอย่างไร
     ]
     
+    # Promotional patterns that SHOULD be used for filtering
+    promotional_patterns = [
+        r'(?:ตอนนี้มี|มีอะไร|มีไหม).*?ส่วนลด',  # ตอนนี้มีส่วนลดอะไรบ้าง
+        r'ส่วนลด.*?(?:อะไรบ้าง|ไหน|มีอะไร)',   # ส่วนลดอะไรบ้าง
+        r'(?:จัดส่งฟรี|ส่งฟรี).*?(?:ไหม|หรือเปล่า|มั้ย)',  # จัดส่งฟรีไหม
+        r'(?:รุ่นไหน|อะไร).*?(?:มีประกัน|ประกัน).*?(?:บ้าง|ไหม)'  # รุ่นไหนมีประกันบ้าง
+    ]
+    
+    # Check if it's a promotional query (should be used for filtering)
+    for pattern in promotional_patterns:
+        if re.search(pattern, phrase_lower):
+            return False  # It's a promotional query - should be used for filtering
+    
+    # Check if it's a regular non-filter phrase
     all_patterns = request_patterns + question_patterns
     
     for pattern in all_patterns:
@@ -888,6 +988,22 @@ def build_basic_query(processed_terms: Dict[str, Any]) -> Dict[str, Any]:
     # Add budget if found
     if processed_terms.get("budget", {}).get("max"):
         query["salePrice"] = {"$lte": processed_terms["budget"]["max"]}
+    
+    # Add promotional filters (NEW)
+    if processed_terms.get("discount_inquiry"):
+        # Filter products with discount (price > salePrice)
+        query["$expr"] = {"$gt": ["$price", "$salePrice"]}
+    
+    if processed_terms.get("free_shipping_inquiry"):
+        # Filter products with free shipping
+        query["freeShipping"] = True
+    
+    if processed_terms.get("warranty_inquiry"):
+        # Filter products with warranty (2-year OR 3-year)
+        query["$or"] = [
+            {"product_warranty_2_year": True},
+            {"product_warranty_3_year": True}
+        ]
     
     return query
 
@@ -979,9 +1095,13 @@ Stock: {p.stockQuantity}
 
 **ชื่อผลิตภัณฑ์เฉพาะ** → ค้นหาใน **TITLE** (ความสำคัญสูงสุด):
 - "Ryzen 5 5600G", "Intel Core i5", "RTX 4060", "GTX 1660"
-- "MacBook Pro", "ThinkPad", "Pavilion", "Inspiron"
+- "MacBook Pro", "ThinkPad", "Pavilion", "Inspiron" 
 - "MX Master", "K95 RGB", "Razer DeathAdder"
-- **วิธีการ**: ค้นหาคำสำคัญในชื่อ เช่น "5600G" อาจพบใน "AMD RYZEN 5 5600G 3.9 GHz"
+- **วิธีการแยกคำสำคัญ**: 
+  - "Ryzen 5 5600G" → แยกเป็น ["Ryzen", "5", "5600G", "5600", "G"] 
+  - "RTX 4060" → แยกเป็น ["RTX", "4060", "40", "60"]
+  - ค้นหาแต่ละคำใน title แล้วให้คะแนนตามจำนวนคำที่พบ
+- **การให้คะแนน**: พบครบทุกคำสำคัญ = 95-100, พบบางส่วน = 70-90
 
 **แบรนด์/รุ่น** → ค้นหาใน **TITLE**:
 - "ASUS", "HP", "Dell", "MSI", "Acer", "Lenovo", "Apple"
@@ -1010,14 +1130,32 @@ Stock: {p.stockQuantity}
 Content: ["ASUS"] → ดู title ว่ามี "ASUS" หรือไม่
 Content: ["ทำงานกราฟิก"] → ดู description ว่าระบุสเปคทำงานกราฟิกได้หรือไม่  
 Content: ["RGB", "mechanical"] → ดู title+description ว่ามีคำเหล่านี้หรือไม่
-Content: ["Ryzen 5 5600G"] → ดู title ว่าผลิตภัณฑ์ไหนมีคำว่า "5600G" หรือ "RYZEN 5 5600G" ใน title
-Content: ["RTX 4060"] → ดู title ว่าผลิตภัณฑ์ไหนมีคำว่า "RTX 4060" ใน title
 
-**SPECIFIC PRODUCT NAME MATCHING STRATEGY:**
-1. **แยกคำสำคัญ**: "Ryzen 5 5600G" → ["Ryzen", "5600G", "AMD"]
-2. **ค้นหาใน Title**: หาผลิตภัณฑ์ที่มีคำสำคัญเหล่านี้ใน title
-3. **ถ้าไม่เจอใน Title**: ลองค้นหาใน description 
-4. **ให้คะแนนสูง**: ถ้าเจอใน title = 95-100 คะแนน, ใน description = 70-80 คะแนน
+**ENHANCED PRODUCT MATCHING EXAMPLES:**
+Content: ["Ryzen 5 5600G"] 
+→ แยกคำ: ["Ryzen"(50), "5"(10), "5600G"(40), "5600"(30), "G"(10)]
+→ ค้นหาใน title: "AMD RYZEN 5 5600G 3.9GHz" → พบ Ryzen(50) + 5(10) + 5600G(40) = 100 คะแนน
+
+Content: ["RTX 4060"] 
+→ แยกคำ: ["RTX"(50), "4060"(40), "40"(15), "60"(15)]
+→ ค้นหาใน title: "ASUS RTX 4060 Ti OC 8GB" → พบ RTX(50) + 4060(40) = 90 คะแนน
+
+Content: ["RTX"] (จากคำถาม "การ์ดจอ RTX รุ่นไหนมีประกันบ้าง")
+→ ค้นหาใน title ทุกรุ่น RTX → ให้คะแนนผลิตภัณฑ์ที่มี RTX ใน title
+
+**SPECIFIC PRODUCT NAME MATCHING STRATEGY (ENHANCED):**
+1. **แยกคำสำคัญอย่างละเอียด**: 
+   - "Ryzen 5 5600G" → ["Ryzen", "5", "5600G", "5600", "G", "AMD"] 
+   - "RTX 4060" → ["RTX", "4060", "40", "60", "NVIDIA"]
+   - "Intel Core i5" → ["Intel", "Core", "i5", "i", "5"]
+2. **ค้นหาใน Title ก่อน**: ให้คะแนนสูงสุดถ้าพบคำสำคัญใน title
+3. **การให้คะแนนแบบถ่วงน้ำหัก**:
+   - พบคำหลัก (เช่น "Ryzen", "RTX") = +50 คะแนน
+   - พบรุ่น (เช่น "5600G", "4060") = +40 คะแนน  
+   - พบรายละเอียด (เช่น "5", "G") = +10 คะแนน
+   - รวม 95-100 คะแนน = Perfect Match
+   - รวม 70-94 คะแนน = Good Match
+4. **ถ้าไม่เจอใน Title**: ลองค้นหาใน description แต่ลดคะแนน 20%
 
 ตอบใน JSON:
 {{
@@ -1045,7 +1183,7 @@ Content: ["RTX 4060"] → ดู title ว่าผลิตภัณฑ์ไ�
             client = get_openai_client()
             
         response = client.chat.completions.create(
-            model="gpt-4o-mini",
+            model="gpt-4.1-mini",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.2,
         )
@@ -1172,7 +1310,7 @@ async def generate_two_stage_response(
             client = get_openai_client()
             
         response = client.chat.completions.create(
-            model="gpt-4o-mini",
+            model="gpt-4.1-mini",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.7,
         )
@@ -1319,7 +1457,7 @@ Stock: {p.stockQuantity}
             client = get_openai_client()
             
         response = client.chat.completions.create(
-            model="gpt-4o-mini",
+            model="gpt-4.1-mini",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.3,
         )
