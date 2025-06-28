@@ -643,7 +643,7 @@ Analysis:
             client = get_openai_client()
             
         response = client.chat.completions.create(
-            model="gpt-4.1-mini",
+            model="gpt-4.1",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.1,
         )
@@ -1183,7 +1183,7 @@ Content: ["RTX"] (จากคำถาม "การ์ดจอ RTX รุ่�
             client = get_openai_client()
             
         response = client.chat.completions.create(
-            model="gpt-4.1-mini",
+            model="gpt-4.1",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.2,
         )
@@ -1310,7 +1310,7 @@ async def generate_two_stage_response(
             client = get_openai_client()
             
         response = client.chat.completions.create(
-            model="gpt-4.1-mini",
+            model="gpt-4.1",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.7,
         )
@@ -1457,7 +1457,7 @@ Stock: {p.stockQuantity}
             client = get_openai_client()
             
         response = client.chat.completions.create(
-            model="gpt-4.1-mini",
+            model="gpt-4.1",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.3,
         )

@@ -50,7 +50,7 @@ async def test_openai():
         
         # Simple test call
         response = client.chat.completions.create(
-            model="gpt-4o-mini",
+            model="gpt-4.1",
             messages=[{"role": "user", "content": "Hello"}],
             max_tokens=5
         )

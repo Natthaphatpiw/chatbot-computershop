@@ -178,7 +178,7 @@ Database Schema (MongoDB Collection: products):
             client = get_openai_client()
             
         response = client.chat.completions.create(
-            model="gpt-4.1-mini",
+            model="gpt-4.1",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.1,
         )
@@ -370,7 +370,7 @@ MongoDB Query ที่ใช้:
             client = get_openai_client()
             
         response = client.chat.completions.create(
-            model="gpt-4.1-mini",
+            model="gpt-4.1",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.2,
         )
@@ -471,7 +471,7 @@ User Context:
             client = get_openai_client()
             
         response = client.chat.completions.create(
-            model="gpt-4.1-mini",
+            model="gpt-4.1",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.7,
         )
