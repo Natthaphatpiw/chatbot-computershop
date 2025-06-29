@@ -34,8 +34,13 @@ async def chat_endpoint(request: ChatRequest, db=Depends(get_database)):
         # Initialize chatbot with database
         chatbot = ITStoreChatbot(db)
         
-        # Process user input with comprehensive chatbot system
-        result = await chatbot.process_user_input(request.message)
+        # Get session_id from request or generate default
+        session_id = getattr(request, 'session_id', 'default')
+        if not session_id:
+            session_id = 'default'
+        
+        # Process user input with comprehensive chatbot system + conversation memory
+        result = await chatbot.process_user_input(request.message, session_id)
         
         # Convert stage1 data to entities format for backward compatibility
         entities = None

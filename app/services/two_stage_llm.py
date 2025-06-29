@@ -117,7 +117,7 @@ def enhanced_contextual_phrase_segmentation(text: str) -> Dict[str, Any]:
             "stage": "stage1_filter", 
             "priority": 9
         },
-        # PROMOTIONAL QUERIES - NEW HIGH PRIORITY
+        # PROMOTIONAL QUERIES - HIGH PRIORITY
         {
             "pattern": r'(?:ตอนนี้มี|มีอะไร|มีไหม).*?ส่วนลด',
             "type": "DISCOUNT_INQUIRY",
@@ -140,6 +140,72 @@ def enhanced_contextual_phrase_segmentation(text: str) -> Dict[str, Any]:
             "pattern": r'(?:รุ่นไหน|อะไร).*?(?:มีประกัน|ประกัน).*?(?:บ้าง|ไหม)',
             "type": "WARRANTY_INQUIRY",
             "stage": "stage1_filter",
+            "priority": 10
+        },
+        
+        # SPEC BUILDING QUERIES - NEW HIGH PRIORITY  
+        {
+            "pattern": r'(?:จัดสเปค|จัดชุด|ชุดอุปกรณ์).*?(?:งบ|budget)',
+            "type": "SPEC_BUILDING",
+            "stage": "stage3_questions",
+            "priority": 10
+        },
+        {
+            "pattern": r'สเปค.*?(?:เล่นเกม|gaming|ทำงาน|work)',
+            "type": "SPEC_BUILDING",
+            "stage": "stage3_questions", 
+            "priority": 10
+        },
+        {
+            "pattern": r'(?:ระบบ|ชุด).*?(?:pos|streaming|เกมมิ่ง)',
+            "type": "SPEC_BUILDING",
+            "stage": "stage3_questions",
+            "priority": 10
+        },
+        
+        # COMPARISON QUERIES - NEW HIGH PRIORITY
+        {
+            "pattern": r'(.+?)\s*(?:vs|กับ|เทียบ)\s*(.+?)(?:\s|ตัวไหนดี|ต่างกัน)',
+            "type": "COMPARISON",
+            "stage": "stage3_questions",
+            "priority": 10
+        },
+        {
+            "pattern": r'(.+?)\s*ตัวไหน(?:ดี|เก่ง|เร็ว)(?:กว่า|ที่สุด)',
+            "type": "COMPARISON",
+            "stage": "stage3_questions",
+            "priority": 10
+        },
+        {
+            "pattern": r'(.+?)\s*ต่างกัน(?:แค่ไหน|มาก|มั้ย|ไหม)',
+            "type": "COMPARISON",
+            "stage": "stage3_questions",
+            "priority": 10
+        },
+        
+        # TROUBLESHOOTING QUERIES - NEW HIGH PRIORITY
+        {
+            "pattern": r'(?:เปิดไม่ติด|boot|บูต|เสียงบีบ)',
+            "type": "TROUBLESHOOTING",
+            "stage": "stage3_questions",
+            "priority": 10
+        },
+        {
+            "pattern": r'(?:ช้า|lag|กระตุก|fps ต่ำ|ค้าง)',
+            "type": "TROUBLESHOOTING", 
+            "stage": "stage3_questions",
+            "priority": 10
+        },
+        {
+            "pattern": r'(?:จอฟ้า|blue screen|จอดับ)',
+            "type": "TROUBLESHOOTING",
+            "stage": "stage3_questions",
+            "priority": 10
+        },
+        {
+            "pattern": r'(?:อัพเกรด|upgrade).*?(?:จาก|เป็น)',
+            "type": "TROUBLESHOOTING",
+            "stage": "stage3_questions",
             "priority": 10
         },
         {
@@ -1383,24 +1449,192 @@ def generate_two_stage_fallback_response(user_input: str, products: List[Product
     
     return response
 
-# LLM Stage 3: Question Answerer for remaining question phrases
+# LLM Stage 3: Enhanced Question Answerer for all question types
 async def stage3_question_answerer(
     user_input: str,
     stage1_result: Dict[str, Any],
     selected_products: List[Product],
-    remaining_questions: List[str]
+    remaining_questions: List[str],
+    conversation_context: Dict[str, Any] = None
 ) -> str:
     """
-    Stage 3 LLM: Answer questions based on selected products
-    Analyzes remaining question phrases and provides answers using product information
+    Enhanced Stage 3 LLM: Answer all types of questions including spec building, comparison, troubleshooting
     """
-    if not remaining_questions or len(selected_products) == 0:
+    if not remaining_questions:
         return ""
     
-    print(f"[Stage 3] Answering questions: {remaining_questions}")
+    print(f"[Stage 3] Processing questions: {remaining_questions}")
+    
+    # Import advanced question handlers
+    from app.services.spec_comparison_manager import spec_manager, comparison_manager, troubleshooting_manager
+    from app.services.conversation_manager import conversation_memory
+    
+    # Determine question type and handle accordingly
+    question_type = detect_advanced_question_type(remaining_questions, user_input)
+    
+    if question_type == "spec_building":
+        return await handle_spec_building_question(user_input, selected_products, conversation_context)
+    elif question_type == "comparison":
+        return await handle_comparison_question(user_input, selected_products, conversation_context)
+    elif question_type == "troubleshooting":
+        return await handle_troubleshooting_question(user_input, conversation_context)
+    else:
+        # Original product-based Q&A
+        return await handle_product_questions(user_input, selected_products, remaining_questions, conversation_context)
+
+def detect_advanced_question_type(remaining_questions: List[str], user_input: str) -> str:
+    """ตรวจสอบประเภทคำถามขั้นสูง"""
+    input_lower = user_input.lower()
+    
+    # Check for spec building
+    spec_keywords = ["จัดสเปค", "จัดชุด", "ชุดอุปกรณ์", "ระบบ", "สเปค"]
+    if any(keyword in input_lower for keyword in spec_keywords):
+        return "spec_building"
+    
+    # Check for comparison
+    comparison_keywords = ["vs", "กับ", "เทียบ", "ตัวไหนดี", "ต่างกัน", "เปรียบเทียบ"]
+    if any(keyword in input_lower for keyword in comparison_keywords):
+        return "comparison"
+    
+    # Check for troubleshooting
+    trouble_keywords = ["เปิดไม่ติด", "แก้", "ปัญหา", "อัพเกรด", "ช้า", "กระตุก", "จอฟ้า"]
+    if any(keyword in input_lower for keyword in trouble_keywords):
+        return "troubleshooting"
+    
+    return "product_qa"
+
+async def handle_spec_building_question(user_input: str, selected_products: List[Product], context: Dict[str, Any] = None) -> str:
+    """จัดการคำถามเกี่ยวกับการจัดสเปค"""
+    from app.services.spec_comparison_manager import spec_manager
+    
+    spec_request = spec_manager.detect_spec_request(user_input)
+    if not spec_request:
+        return "ขออภัย ไม่สามารถระบุความต้องการในการจัดสเปคได้ กรุณาระบุให้ชัดเจนมากขึ้น"
+    
+    # Prepare context for LLM
+    available_products = ""
+    if selected_products:
+        for i, p in enumerate(selected_products[:10]):
+            available_products += f"""
+{i+1}. {p.title} - ฿{p.salePrice:,}
+   Category: {p.cateName}
+   Rating: {p.rating}/5 ({p.totalReviews} reviews)
+"""
+    
+    prompt = f"""
+คุณคือ PC Building Expert ที่เชี่ยวชาญในการจัดสเปคคอมพิวเตอร์และอุปกรณ์ IT
+
+**คำขอจัดสเปค:** "{user_input}"
+
+**ความต้องการที่วิเคราะห์ได้:**
+- ประเภท: {spec_request.get('type', 'ไม่ระบุ')}
+- การใช้งาน: {', '.join(spec_request.get('usage', []))}
+- งบประมาณ: ฿{spec_request.get('budget', 'ไม่ระบุ'):,} บาท
+- ความต้องการเฉพาะ: {', '.join(spec_request.get('specific_needs', []))}
+
+**สินค้าที่มีในระบบ:**
+{available_products if available_products else "ไม่มีสินค้าที่เกี่ยวข้อง"}
+
+**วิธีการตอบ:**
+1. วิเคราะห์ความต้องการและงบประมาณ
+2. แนะนำสเปคที่เหมาะสม โดยระบุ:
+   - คอมโพเนนต์หลัก (CPU, GPU, RAM, Storage)
+   - เหตุผลในการเลือก
+   - การแบ่งงบประมาณ
+3. หากมีสินค้าในระบบที่ตรงความต้องการ ให้แนะนำเฉพาะเจาะจง
+4. ให้คำแนะนำเพิ่มเติมสำหรับการใช้งานที่ระบุ
+
+สร้างคำแนะนำที่ครอบคลุมและเป็นประโยชน์:
+"""
+    
+    return await call_llm_for_spec_building(prompt)
+
+async def handle_comparison_question(user_input: str, selected_products: List[Product], context: Dict[str, Any] = None) -> str:
+    """จัดการคำถามเกี่ยวกับการเปรียบเทียบ"""
+    from app.services.spec_comparison_manager import comparison_manager
+    
+    comparison_request = comparison_manager.detect_comparison_request(user_input)
+    if not comparison_request:
+        return "ขออภัย ไม่สามารถระบุสิ่งที่ต้องการเปรียบเทียบได้ กรุณาระบุให้ชัดเจนมากขึ้น"
+    
+    # Find relevant products for comparison
+    comparison_products = ""
+    if selected_products:
+        relevant_products = [p for p in selected_products[:5] 
+                           if any(item.lower() in p.title.lower() 
+                                 for item in comparison_request['items'])]
+        
+        for i, p in enumerate(relevant_products):
+            comparison_products += f"""
+{i+1}. {p.title} - ฿{p.salePrice:,}
+   Category: {p.cateName}
+   Rating: {p.rating}/5 ({p.totalReviews} reviews)
+   Description: {p.description[:200]}...
+"""
+    
+    prompt = f"""
+คุณคือ Hardware Comparison Expert ที่เชี่ยวชาญในการเปรียบเทียบฮาร์ดแวร์และอุปกรณ์ IT
+
+**คำถามเปรียบเทียบ:** "{user_input}"
+
+**รายละเอียดการเปรียบเทียบ:**
+- ประเภท: {comparison_request.get('type', 'ไม่ระบุ')}
+- สิ่งที่เปรียบเทียบ: {', '.join(comparison_request.get('items', []))}
+- หมวดหมู่: {comparison_request.get('category', 'ไม่ระบุ')}
+- การใช้งาน: {', '.join(comparison_request.get('usage', []))}
+- งบประมาณ: {f"฿{comparison_request.get('budget', 0):,}" if comparison_request.get('budget') else 'ไม่ระบุ'}
+
+**สินค้าที่เกี่ยวข้องในระบบ:**
+{comparison_products if comparison_products else "ไม่พบสินค้าที่เกี่ยวข้อง"}
+
+**วิธีการตอบ:**
+1. เปรียบเทียบคุณสมบัติและประสิทธิภาพ
+2. ระบุข้อดี-ข้อเสียของแต่ละตัวเลือก  
+3. แนะนำตัวเลือกที่เหมาะสมตามการใช้งาน
+4. หากมีสินค้าในระบบ ให้อ้างอิงราคาและรีวิวประกอบ
+5. สรุปคำแนะนำที่ชัดเจน
+
+สร้างคำตอบที่ครอบคลุมและเป็นประโยชน์:
+"""
+    
+    return await call_llm_for_comparison(prompt)
+
+async def handle_troubleshooting_question(user_input: str, context: Dict[str, Any] = None) -> str:
+    """จัดการคำถามเกี่ยวกับการแก้ปัญหา"""
+    from app.services.spec_comparison_manager import troubleshooting_manager
+    
+    trouble_request = troubleshooting_manager.detect_troubleshooting_request(user_input)
+    if not trouble_request:
+        return "ขออภัย ไม่สามารถระบุปัญหาได้ กรุณาอธิบายอาการให้ชัดเจนมากขึ้น"
+    
+    prompt = f"""
+คุณคือ IT Technical Support Expert ที่เชี่ยวชาญในการแก้ปัญหาฮาร์ดแวร์และซอฟต์แวร์
+
+**ปัญหา:** "{user_input}"
+
+**ประเภทปัญหา:** {trouble_request.get('type', 'ไม่ระบุ')}
+**รายละเอียด:** {trouble_request.get('description', 'ไม่มี')}
+
+**วิธีการตอบ:**
+1. วิเคราะห์สาเหตุที่เป็นไปได้
+2. แนะนำวิธีแก้ปัญหาแบบ step-by-step
+3. ระบุสิ่งที่ควรตรวจสอบก่อน
+4. แนะนำการป้องกันปัญหาในอนาคต
+5. หากเป็นปัญหาร้อนแรง ให้คำแนะนำเบื้องต้นทันที
+
+สร้างคำแนะนำที่เป็นประโยชน์และใช้งานได้จริง:
+"""
+    
+    return await call_llm_for_troubleshooting(prompt)
+
+async def handle_product_questions(user_input: str, selected_products: List[Product], 
+                                 remaining_questions: List[str], context: Dict[str, Any] = None) -> str:
+    """จัดการคำถามทั่วไปเกี่ยวกับสินค้า (เดิม)"""
+    if len(selected_products) == 0:
+        return ""
     
     # Prepare products info for analysis
-    top_products = selected_products[:3]  # Analyze top 3 products
+    top_products = selected_products[:3]
     products_info = ""
     for i, p in enumerate(top_products):
         products_info += f"""
@@ -1521,9 +1755,67 @@ def is_question_phrase(phrase: str) -> bool:
     
     return False
 
+# LLM Helper Functions for Advanced Question Types
+async def call_llm_for_spec_building(prompt: str) -> str:
+    """เรียก LLM สำหรับคำถามจัดสเปค"""
+    try:
+        global client
+        if client is None:
+            client = get_openai_client()
+            
+        response = client.chat.completions.create(
+            model="gpt-4.1",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.3,
+        )
+        
+        return response.choices[0].message.content.strip()
+        
+    except Exception as error:
+        print(f"Spec building LLM error: {error}")
+        return "ขออภัย เกิดข้อผิดพลาดในการวิเคราะห์ความต้องการจัดสเปค กรุณาลองใหม่อีกครั้ง"
+
+async def call_llm_for_comparison(prompt: str) -> str:
+    """เรียก LLM สำหรับคำถามเปรียบเทียบ"""
+    try:
+        global client
+        if client is None:
+            client = get_openai_client()
+            
+        response = client.chat.completions.create(
+            model="gpt-4.1",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.2,
+        )
+        
+        return response.choices[0].message.content.strip()
+        
+    except Exception as error:
+        print(f"Comparison LLM error: {error}")
+        return "ขออภัย เกิดข้อผิดพลาดในการเปรียบเทียบ กรุณาลองใหม่อีกครั้ง"
+
+async def call_llm_for_troubleshooting(prompt: str) -> str:
+    """เรียก LLM สำหรับคำถามแก้ปัญหา"""
+    try:
+        global client
+        if client is None:
+            client = get_openai_client()
+            
+        response = client.chat.completions.create(
+            model="gpt-4.1",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.1,
+        )
+        
+        return response.choices[0].message.content.strip()
+        
+    except Exception as error:
+        print(f"Troubleshooting LLM error: {error}")
+        return "ขออภัย เกิดข้อผิดพลาดในการวิเคราะห์ปัญหา กรุณาลองใหม่อีกครั้ง"
+
 # Export main functions
 __all__ = [
-    'stage1_basic_query_builder',
+    'stage1_context_analysis_and_query_builder',
     'stage2_content_analyzer', 
     'stage3_question_answerer',
     'generate_two_stage_response',
@@ -1531,5 +1823,10 @@ __all__ = [
     'get_comprehensive_category_mapping',
     'is_non_filter_phrase',
     'extract_question_phrases',
-    'is_question_phrase'
+    'is_question_phrase',
+    'enhanced_contextual_phrase_segmentation',
+    'detect_advanced_question_type',
+    'handle_spec_building_question',
+    'handle_comparison_question',
+    'handle_troubleshooting_question'
 ]

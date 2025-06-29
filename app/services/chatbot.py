@@ -1,5 +1,5 @@
 from motor.motor_asyncio import AsyncIOMotorDatabase
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from app.models import Product, ExtractedEntities
 from app.services.two_stage_llm import (
     stage1_context_analysis_and_query_builder,
@@ -9,52 +9,80 @@ from app.services.two_stage_llm import (
     normalize_text_advanced,
     extract_question_phrases
 )
+from app.services.conversation_manager import (
+    conversation_memory,
+    input_consolidator
+)
+from app.services.spec_comparison_manager import (
+    spec_manager,
+    comparison_manager,
+    troubleshooting_manager
+)
 
 class ITStoreChatbot:
     def __init__(self, database: AsyncIOMotorDatabase):
         self.collection = database["products"]  # Fixed to use correct collection name
     
-    async def process_user_input(self, user_input: str):
+    async def process_user_input(self, user_input: str, session_id: str = "default"):
         try:
-            # 1. Normalize text with advanced Thai language processing
+            # 1. Check for input consolidation (handle multiple messages)
+            should_consolidate = input_consolidator.should_consolidate(session_id, user_input)
+            if should_consolidate:
+                consolidated_input = input_consolidator.consolidate_input(session_id, user_input)
+                print(f"[Consolidated] '{user_input}' + previous → '{consolidated_input}'")
+                user_input = consolidated_input
+            
+            # 2. Get conversation context
+            conversation_context = conversation_memory.get_context(session_id)
+            recent_messages = conversation_memory.get_recent_messages(session_id, 3)
+            
+            # 3. Check for advanced question types first
+            spec_request = spec_manager.detect_spec_request(user_input)
+            comparison_request = comparison_manager.detect_comparison_request(user_input) 
+            trouble_request = troubleshooting_manager.detect_troubleshooting_request(user_input)
+            
+            # 4. Normalize text with advanced Thai language processing
             normalized_input = normalize_text_advanced(user_input)
             
-            # 2. Stage 1: Context analysis and query building for initial filtering
+            # 5. Stage 1: Context analysis and query building for initial filtering
             stage1_result = await stage1_context_analysis_and_query_builder(user_input)
             
-            # 3. Search products with Stage 1 query
+            # 6. Search products with Stage 1 query
             raw_products = await self.search_products_precise(stage1_result["query"])
             
-            # 4. If no results, try progressive fallback
+            # 7. If no results, try progressive fallback
             if len(raw_products) == 0:
                 raw_products = await self.search_with_fallback_two_stage(
                     stage1_result["processedTerms"], 
                     stage1_result["query"]
                 )
             
-            # 5. Stage 2: Deep content analysis and product matching
+            # 8. Stage 2: Deep content analysis and product matching
             filtered_products = await stage2_content_analyzer(
                 user_input,
                 stage1_result,
                 raw_products
             )
             
-            # 6. Stage 3: Use question phrases from Stage 1 analysis
+            # 9. Stage 3: Enhanced question answering with conversation context
             stage_assignments = stage1_result.get("stageAssignments", {})
             question_phrases = stage_assignments.get("stage3_questions", [])
             stage3_answer = ""
             
             print(f"[Main] Stage 3 question phrases: {question_phrases}")
+            print(f"[Main] Advanced requests: spec={bool(spec_request)}, comparison={bool(comparison_request)}, trouble={bool(trouble_request)}")
             
-            if question_phrases and len(filtered_products) > 0:
+            # Enhanced Stage 3 with conversation context
+            if question_phrases or spec_request or comparison_request or trouble_request:
                 stage3_answer = await stage3_question_answerer(
                     user_input,
                     stage1_result,
                     filtered_products,
-                    question_phrases
+                    question_phrases,
+                    conversation_context
                 )
             
-            # 7. Generate comprehensive response (now three-stage)
+            # 10. Generate comprehensive response (now three-stage)
             response = await generate_two_stage_response(
                 user_input,
                 stage1_result,
@@ -64,6 +92,25 @@ class ITStoreChatbot:
             # Append Stage 3 answer if available
             if stage3_answer:
                 response += f"\n\n**💬 คำตอบเพิ่มเติม:**\n{stage3_answer}"
+            
+            # 11. Store conversation in memory
+            conversation_memory.add_message(
+                session_id=session_id,
+                user_input=user_input,
+                bot_response=response,
+                query_type=stage1_result.get("queryType", "unknown"),
+                categories=stage1_result.get("processedTerms", {}).get("categories", []),
+                budget=stage1_result.get("processedTerms", {}).get("budget")
+            )
+            
+            # 12. Determine query method for response
+            query_method = "three_stage_llm"
+            if spec_request:
+                query_method = "spec_building"
+            elif comparison_request:
+                query_method = "comparison"  
+            elif trouble_request:
+                query_method = "troubleshooting"
             
             return {
                 "products": filtered_products,
@@ -77,7 +124,17 @@ class ITStoreChatbot:
                 "confidence": stage1_result.get("confidence", 0.8),
                 "rawProductCount": len(raw_products),
                 "filteredProductCount": len(filtered_products),
-                "searchMethod": "three_stage_llm"
+                "searchMethod": query_method,
+                "conversationContext": {
+                    "session_id": session_id,
+                    "consolidated_input": user_input if should_consolidate else None,
+                    "recent_messages_count": len(recent_messages)
+                },
+                "advancedRequests": {
+                    "spec_building": bool(spec_request),
+                    "comparison": bool(comparison_request), 
+                    "troubleshooting": bool(trouble_request)
+                }
             }
         except Exception as error:
             print(f"Chatbot error: {error}")
